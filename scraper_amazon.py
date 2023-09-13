@@ -60,3 +60,15 @@ class ScraperAmazon (Scraper):
         """
         
         return text != ""
+    
+    def __get_price__ (self, text:str) -> str:
+        """ Get product clean price in aliexpress
+
+        Args:
+            text (str): price as text
+
+        Returns:
+            str: clean price
+        """
+        
+        price = self.__clean_text__ (price, ["$", "US "])

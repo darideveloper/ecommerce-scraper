@@ -51,6 +51,18 @@ class Scraper (ChromDevWrapper, ABC):
         """
         pass
     
+    @abstractmethod    
+    def __get_price__ (self, text:str) -> str:
+        """ Abstract method to get product clean price
+
+        Args:
+            text (str): price as text
+
+        Returns:
+            str: clean price
+        """
+        pass
+    
     def __clean_text__ (self, text:str, chars:list) -> str:
         """ Clean extra characters from text
 
@@ -155,7 +167,7 @@ class Scraper (ChromDevWrapper, ABC):
             link = self.get_attrib (selector_link, "href")
                 
             # Clean data 
-            price = self.__clean_text__ (price, ["$", "US "])
+            price = self.__get_price__ (price)
             price = float(price)
             
             if not image.startswith ("https"):
