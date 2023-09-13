@@ -52,7 +52,7 @@ class Scraper (ChromDevWrapper, ABC):
         pass
     
     @abstractmethod    
-    def __get_price__ (self, text:str) -> str:
+    def __get_clean_price__ (self, text:str) -> str:
         """ Abstract method to get product clean price
 
         Args:
@@ -60,6 +60,18 @@ class Scraper (ChromDevWrapper, ABC):
 
         Returns:
             str: clean price
+        """
+        pass
+    
+    @abstractmethod    
+    def __get_reviews__ (self, selector:str) -> str:
+        """ Abstract method to get product reviews number as text
+        
+        Args:
+            selector (str): css selector
+
+        Returns:
+            str: reviews number as text
         """
         pass
     
@@ -161,13 +173,17 @@ class Scraper (ChromDevWrapper, ABC):
             image = self.get_attrib (selector_image, "src")    
             title = self.get_text (selector_title)
             rate_num = self.get_text (selector_rate_num)
-            reviews = self.get_attrib (selector_reviews, "aria-label")
             best_seller = self.get_text (selector_best_seller)
             sales = self.get_text (selector_sales)
             link = self.get_attrib (selector_link, "href")
-                
+            
+            # Custom extract data
+            reviews = self.__get_reviews__ (selector_reviews)
+                            
             # Clean data 
-            price = self.__get_price__ (price)
+            price = self.__get_clean_price__ (price)
+            if not price:
+                continue
             price = float(price)
             
             if not image.startswith ("https"):
@@ -177,8 +193,8 @@ class Scraper (ChromDevWrapper, ABC):
                 rate_num = float(rate_num[0:3])
             
             if reviews:
-                reviews = self.__clean_text__ (reviews, [",", " ", "+"])
-                reviews = float(reviews)
+                reviews = self.__clean_text__ (reviews, [",", " ", "+", "productratings"])
+                reviews = int(reviews)
                 
             if best_seller:
                 best_seller = True

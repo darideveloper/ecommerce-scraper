@@ -63,7 +63,7 @@ class ScraperAliexpress (Scraper):
 
         return text.lower() == "ad"
 
-    def __get_price__ (self, text:str) -> str:
+    def __get_clean_price__ (self, text:str) -> str:
         """ Get product clean price in aliexpress
 
         Args:
@@ -74,3 +74,16 @@ class ScraperAliexpress (Scraper):
         """
         
         price = self.__clean_text__ (price, ["$", "US "])
+        
+    def __get_reviews__ (self, selector:str) -> str:
+        """ Get product reviews number as text
+        
+        Args:
+            selector (str): css selector
+
+        Returns:
+            str: reviews number as text
+        """
+        
+        reviews = self.get_attrib (selector, "aria-label")
+        return reviews
