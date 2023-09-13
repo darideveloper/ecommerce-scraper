@@ -73,7 +73,8 @@ class ScraperAliexpress (Scraper):
             str: clean price
         """
         
-        price = self.__clean_text__ (price, ["$", "US "])
+        price = self.__clean_text__ (text, ["$", "US "])
+        return price
         
     def __get_reviews__ (self, selector:str) -> str:
         """ Get product reviews number as text
