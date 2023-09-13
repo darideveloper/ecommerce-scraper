@@ -2,15 +2,17 @@ import os
 from threading import Thread
 from scraper_amazon import ScraperAmazon
 from scraper_aliexpress import ScraperAliexpress
+from scraper_ebay import ScraperEbay
 from dotenv import load_dotenv
 
 load_dotenv ()
 THREADING = os.getenv ("THREADING") == "True"
 
 REFERRAL_LINK = ""
-KEYWORD = "ssd 2tb"
+KEYWORD = "ssd"
 
-classes = [ScraperAmazon, ScraperAliexpress]
+classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
+# classes = [ScraperEbay]
 
 # Create instances
 instances = []
