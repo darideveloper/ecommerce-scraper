@@ -23,7 +23,7 @@ class ScraperEbay (Scraper):
         # Css self.selectors
         self.selectors = {
             'product': 'li.s-item',
-            'image': 'img[data-atftimer]',
+            'image': 'img',
             'title': '.s-item__title',
             'rate_num': '.x-star-rating > span',
             'reviews': '.s-item__reviews-count > span:nth-child(1)',
