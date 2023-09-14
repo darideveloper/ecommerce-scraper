@@ -2,17 +2,27 @@ import pymysql.cursors
 
 class MySQL ():
 
-    def __init__ (self, server, database, username, password):
+    def __init__ (self, server:str, database:str, username:str, password:str):
+        """ Connect with mysql db
+
+        Args:
+            server (str): server host
+            database (str): database name
+            username (str): database username
+            password (str): database password
+        """
 
         self.server = server
         self.database = database
         self.username = username
         self.password = password
 
-    def run_sql (self, sql):
+    def run_sql (self, sql:str):
         """ Exceute sql code
-
-        Run sql code in the current data base, and commit it
+            Run sql code in the current data base, and commit it
+            
+        Args:
+            sql (str): sql code to run
         """
 
         # Connect and get cursor
@@ -45,7 +55,7 @@ class MySQL ():
     
     def get_clean_text (text:str) -> str():
         
-        chars = [";", "--", "\b", "\r", "\t", "\n", "\f", "\v", "\0"]
+        chars = [";", "--", "\b", "\r", "\t", "\n", "\f", "\v", "\0", "'", '"']
         for char in chars:
             text = text.replace(char, "")
         return text

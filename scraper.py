@@ -3,13 +3,20 @@ from time import sleep
 from dotenv import load_dotenv
 from chrome_dev.chrome_dev import ChromDevWrapper
 from abc import ABC, abstractmethod
+from db import Database
 
 # read .env file
 load_dotenv ()
 MAX_PRODUCTS = int(os.getenv ("MAX_PRODUCTS"))
 CHROME_PATH = os.getenv ("CHROME_PATH")
+DB_HOST = os.getenv ("DB_HOST")
+DB_USER = os.getenv ("DB_USER")
+DB_PASSWORD = os.getenv ("DB_PASSWORD")
+DB_NAME = os.getenv ("DB_NAME")
 
 class Scraper (ChromDevWrapper, ABC):
+    
+    db = Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
     
     def __init__ (self, keyword:str, referral_link:str):
         """ Start scraper
@@ -24,8 +31,7 @@ class Scraper (ChromDevWrapper, ABC):
         self.referral_link = referral_link
         
         # Open chrome
-        super().__init__ (chrome_path=CHROME_PATH, start_killing=False)
-        
+        super().__init__ (chrome_path=CHROME_PATH, start_killing=False)        
     
     @abstractmethod
     def __get_search_link__ (self, product:str) -> str:
@@ -186,15 +192,21 @@ class Scraper (ChromDevWrapper, ABC):
                 continue
             price = float(price)
             
+            title = self.__clean_text__ (title, [",", " ", "'", '"'])
+            
             if not image.startswith ("https"):
                 image = "https:" + image
             
             if rate_num:
                 rate_num = float(rate_num[0:3])
+            else:
+                rate_num = 0.0
             
             if reviews:
                 reviews = self.__clean_text__ (reviews, [",", " ", "+", "productratings"])
                 reviews = int(reviews)
+            else:
+                reviews = 0
                 
             if best_seller:
                 best_seller = True
@@ -228,6 +240,7 @@ class Scraper (ChromDevWrapper, ABC):
                 "best_seller": best_seller,
                 "sales": sales,
                 "link": link,
+                "id_store": ""
             })
             
             # End loop when extract al required products
@@ -236,4 +249,7 @@ class Scraper (ChromDevWrapper, ABC):
                 
         print (f"({self.store}) {extracted_products} products extracted")
         
-        # TODO: return scraped data
+        # Save products in db
+        Scraper.db.save_products (products_data)
+        
+        print (f"({self.store}) {extracted_products} products saved")
