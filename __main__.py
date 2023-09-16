@@ -6,7 +6,7 @@ from scraper_ebay import ScraperEbay
 from dotenv import load_dotenv
 
 load_dotenv ()
-THREADING = os.getenv ("THREADING") == "True"
+USE_THREADING = os.getenv ("USE_THREADING") == "True"
 
 REFERRAL_LINK = ""
 KEYWORD = "ssd"
@@ -22,7 +22,7 @@ for class_elem in classes:
     
 # Start threads
 for instance in instances:    
-    if THREADING:
+    if USE_THREADING:
         thread_obj = Thread(target=instance.get_results)
         thread_obj.start ()
     else:

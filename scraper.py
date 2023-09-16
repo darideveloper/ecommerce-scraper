@@ -1,4 +1,6 @@
 import os
+import csv
+import random
 from time import sleep
 from dotenv import load_dotenv
 from chrome_dev.chrome_dev import ChromDevWrapper
@@ -13,7 +15,15 @@ DB_HOST = os.getenv ("DB_HOST")
 DB_USER = os.getenv ("DB_USER")
 DB_PASSWORD = os.getenv ("DB_PASSWORD")
 DB_NAME = os.getenv ("DB_NAME")
+USE_PROXIES = os.getenv ("USE_PROXIES") == "True"
 
+CURRENT_FOLDER = os.path.dirname(__file__)
+PROXYES_PATH = os.path.join(CURRENT_FOLDER, "proxies.csv")
+
+with open (PROXYES_PATH, "r") as file:
+    reader = csv.reader (file)
+    PROXIES = list(reader)
+    
 class Scraper (ChromDevWrapper, ABC):
     
     db = Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
@@ -30,8 +40,25 @@ class Scraper (ChromDevWrapper, ABC):
         self.keyword = keyword
         self.referral_link = referral_link
         
-        # Open chrome
-        super().__init__ (chrome_path=CHROME_PATH, start_killing=False)        
+        
+        if USE_PROXIES:
+        
+            # Get random proxy
+            current_proxy = random.choice (PROXIES)
+            
+            # Open chrome
+            super().__init__ (
+                chrome_path=CHROME_PATH, 
+                start_killing=False, 
+                proxy_host=current_proxy[0], 
+                proxy_port=current_proxy[1]
+            )        
+            
+        else:
+            super().__init__ (
+                chrome_path=CHROME_PATH, 
+                start_killing=False, 
+            )       
         
         # DEBUG: delete products
         self.db.delete_products ()
