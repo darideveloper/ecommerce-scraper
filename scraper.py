@@ -27,6 +27,7 @@ with open (PROXYES_PATH, "r") as file:
 class Scraper (ChromDevWrapper, ABC):
     
     db = Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
+    stores = db.get_stores ()
     
     def __init__ (self, keyword:str, referral_link:str):
         """ Start scraper
@@ -62,10 +63,6 @@ class Scraper (ChromDevWrapper, ABC):
         
         # DEBUG: delete products
         self.db.delete_products ()
-        
-        # get stores from db
-        self.stores = self.db.get_stores ()
-
     
     @abstractmethod
     def __get_search_link__ (self, product:str) -> str:
@@ -294,7 +291,7 @@ class Scraper (ChromDevWrapper, ABC):
                 "best_seller": best_seller,
                 "sales": sales,
                 "link": link,
-                "id_store": self.stores[self.store]["id"]
+                "id_store": Scraper.stores[self.store]["id"]
             })
             
             # End loop when extract al required products
