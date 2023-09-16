@@ -30,7 +30,7 @@ class ScraperAmazon (Scraper):
             'sponsored': '[aria-label~="Sponsored"]',
             'best_seller': '.a-row.a-badge-region',
             'price': 'a.a-size-base .a-offscreen',
-            'sales': '.a-row.a-size-small > span:nth-child(2)',
+            'sales': '.a-row.a-size-base > span.a-color-secondary:only-child',
             'link': 'a',
         }
         
