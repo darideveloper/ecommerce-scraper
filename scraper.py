@@ -38,6 +38,13 @@ class Scraper (ChromDevWrapper, ABC):
         
         # get stores from db
         self.stores = self.db.get_stores ()
+        
+        # Validate required atributes
+        if not self.stores:
+            raise Exception ("No stores found")
+        
+        if not self.start_product:
+            self.start_product = 1
     
     @abstractmethod
     def __get_search_link__ (self, product:str) -> str:
