@@ -97,6 +97,18 @@ class Scraper (ChromDevWrapper, ABC):
             
         return text
     
+    def get_product_link (self, selector:str) -> str:
+        """ Get product link with selector, from href
+
+        Args:
+            selector (str): css selector
+
+        Returns:
+            str: product link in store
+        """
+        
+        return self.get_attrib (selector, "href")        
+    
     def get_results (self) -> list:
         """ Get the results from the search link
 
@@ -181,10 +193,10 @@ class Scraper (ChromDevWrapper, ABC):
             rate_num = self.get_text (selector_rate_num)
             best_seller = self.get_text (selector_best_seller)
             sales = self.get_text (selector_sales)
-            link = self.get_attrib (selector_link, "href")
             
             # Custom extract data
             reviews = self.__get_reviews__ (selector_reviews)
+            link = self.get_product_link (selector_link)
                             
             # Clean data 
             price = self.__get_clean_price__ (price)
@@ -192,7 +204,7 @@ class Scraper (ChromDevWrapper, ABC):
                 continue
             price = float(price)
             
-            title = self.__clean_text__ (title, [",", " ", "'", '"'])
+            title = self.__clean_text__ (title, [",", "'", '"'])
             
             if not image.startswith ("https"):
                 image = "https:" + image
@@ -223,6 +235,10 @@ class Scraper (ChromDevWrapper, ABC):
                     sales = int(number_sales)
                 else:
                     sales = int(sales)
+            else:
+                sales = 0
+                
+            # /Kingston-Renegade-Internal-SFYRDK-2000G/dp/B0BJL7MMNF/ref=sr_1_2?keywords=ssd&qid=1694888235&sr=8-2
                 
                 
             # TODO: add referral link

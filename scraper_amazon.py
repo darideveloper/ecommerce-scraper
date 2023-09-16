@@ -86,3 +86,17 @@ class ScraperAmazon (Scraper):
         
         reviews = self.get_attrib (selector, "aria-label")
         return reviews
+    
+    def get_product_link (self, selector:str) -> str:
+        """ Get product link with selector, from href
+
+        Args:
+            selector (str): css selector
+
+        Returns:
+            str: product link in store
+        """
+        
+        link = self.get_attrib (selector, "href")
+        link = "https://www.amazon.com" + link
+        return link
