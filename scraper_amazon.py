@@ -9,16 +9,15 @@ CHROME_PATH = os.getenv ("CHROME_PATH")
 
 class ScraperAmazon (Scraper):
     
-    def __init__ (self, keyword:str, referral_link:str):
+    def __init__ (self, keyword:str):
         """ Start scraper for amazon
 
         Args:
             keyword (str): product to search
-            referral_link (str): platform referral link
         """
         
         # Send data to scraper
-        super().__init__ (keyword, referral_link)
+        super().__init__ (keyword)
 
         # Css self.selectors
         self.selectors = {

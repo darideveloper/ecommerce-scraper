@@ -8,7 +8,6 @@ from dotenv import load_dotenv
 load_dotenv ()
 USE_THREADING = os.getenv ("USE_THREADING") == "True"
 
-REFERRAL_LINK = ""
 KEYWORD = "ssd"
 
 classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
@@ -17,7 +16,7 @@ classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
 # Create instances
 instances = []
 for class_elem in classes:
-    instance = class_elem(KEYWORD, REFERRAL_LINK)
+    instance = class_elem(KEYWORD)
     instances.append (instance)
     
 # Start threads

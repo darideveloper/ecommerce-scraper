@@ -30,18 +30,15 @@ class Scraper (ChromDevWrapper, ABC):
     db = Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
     stores = db.get_stores ()
     
-    def __init__ (self, keyword:str, referral_link:str):
+    def __init__ (self, keyword:str):
         """ Start scraper
 
         Args:
             keyword (str): product to search
-            referral_link (str): platform referral link
         """
         
         # Scraper settings
-        self.keyword = keyword
-        self.referral_link = referral_link
-        
+        self.keyword = keyword       
         
         if USE_PROXIES:
         
