@@ -35,6 +35,9 @@ class Scraper (ChromDevWrapper, ABC):
         
         # DEBUG: delete products
         self.db.delete_products ()
+        
+        # get stores from db
+        self.stores = self.db.get_stores ()
     
     @abstractmethod
     def __get_search_link__ (self, product:str) -> str:
@@ -263,7 +266,7 @@ class Scraper (ChromDevWrapper, ABC):
                 "best_seller": best_seller,
                 "sales": sales,
                 "link": link,
-                "id_store": ""
+                "id_store": self.stores[self.store]["id"]
             })
             
             # End loop when extract al required products
