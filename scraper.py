@@ -16,6 +16,7 @@ DB_USER = os.getenv ("DB_USER")
 DB_PASSWORD = os.getenv ("DB_PASSWORD")
 DB_NAME = os.getenv ("DB_NAME")
 USE_PROXIES = os.getenv ("USE_PROXIES") == "True"
+USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
 
 CURRENT_FOLDER = os.path.dirname(__file__)
 PROXYES_PATH = os.path.join(CURRENT_FOLDER, "proxies.csv")
@@ -61,8 +62,9 @@ class Scraper (ChromDevWrapper, ABC):
                 start_killing=False, 
             )       
         
-        # DEBUG: delete products
-        self.db.delete_products ()
+        # Delete products in debug mode
+        if USE_DEBUG:
+            self.db.delete_products ()
     
     @abstractmethod
     def __get_search_link__ (self, product:str) -> str:
