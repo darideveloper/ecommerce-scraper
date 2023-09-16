@@ -11,8 +11,8 @@ THREADING = os.getenv ("THREADING") == "True"
 REFERRAL_LINK = ""
 KEYWORD = "ssd"
 
-# classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
-classes = [ScraperAliexpress]
+classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
+# classes = [ScraperAliexpress]
 
 # Create instances
 instances = []
