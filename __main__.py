@@ -12,7 +12,7 @@ REFERRAL_LINK = ""
 KEYWORD = "ssd"
 
 # classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
-classes = [ScraperAmazon]
+classes = [ScraperAliexpress]
 
 # Create instances
 instances = []

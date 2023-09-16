@@ -32,6 +32,9 @@ class Scraper (ChromDevWrapper, ABC):
         
         # Open chrome
         super().__init__ (chrome_path=CHROME_PATH, start_killing=False)        
+        
+        # DEBUG: delete products
+        self.db.delete_products ()
     
     @abstractmethod
     def __get_search_link__ (self, product:str) -> str:
@@ -107,7 +110,11 @@ class Scraper (ChromDevWrapper, ABC):
             str: product link in store
         """
         
-        return self.get_attrib (selector, "href")        
+        link = self.get_attrib (selector, "href")
+        if not link.startswith ("https:"):
+            link = "https:" + link
+        
+        return link
     
     def get_results (self) -> list:
         """ Get the results from the search link
