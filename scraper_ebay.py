@@ -46,9 +46,7 @@ class ScraperEbay (Scraper):
             str: store search link
         """
         
-        product_clean = product.replace (" ", "+")
-        # https://www.ebay.com/sch/i.html?_from=R40&_nkw=ssd&_sacat=0&LH_TitleDesc=0&rt=nc&LH_BIN=1&_fcid=1
-   
+        product_clean = product.replace (" ", "+")  
         return f"https://www.ebay.com/sch/i.html?_nkw={product_clean}&LH_BIN=1&rt=nc&LH_ItemCondition=1000&LH_BIN=1&_fcid=1"
 
     def __get_is_sponsored__ (self, text:str) -> str:

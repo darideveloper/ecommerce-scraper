@@ -143,6 +143,23 @@ class Scraper (ChromDevWrapper, ABC):
         
         return link
     
+    def get_rate_num (self, selector:str) -> float:
+        """ Get product rate number with selector
+
+        Args:
+            selector (str): css selector
+
+        Returns:
+            float: product rate as float
+        """
+        
+        rate_num = self.get_text (selector)
+        
+        if rate_num:
+            rate_num = float(rate_num[0:3])
+        else:
+            rate_num = 0.0
+    
     def get_results (self) -> list:
         """ Get the results from the search link
 
@@ -197,9 +214,18 @@ class Scraper (ChromDevWrapper, ABC):
             selector_rate_num = f'{selector_product} {self.selectors["rate_num"]}'
             selector_reviews = f'{selector_product} {self.selectors["reviews"]}'
             selector_sponsored = f'{selector_product} {self.selectors["sponsored"]}'
-            selector_best_seller = f'{selector_product} {self.selectors["best_seller"]}'
+            
+            if self.selectors["best_seller"]:
+                selector_best_seller = f'{selector_product} {self.selectors["best_seller"]}'
+            else:
+                selector_best_seller = ""
+                
             selector_price = f'{selector_product} {self.selectors["price"]}'
-            selector_sales = f'{selector_product} {self.selectors["sales"]}'
+            
+            if self.selectors["sales"]:
+                selector_sales = f'{selector_product} {self.selectors["sales"]}'
+            else:
+                selector_sales = ""
             selector_link = f'{selector_product} {self.selectors["link"]}'
             
             # Incress product counter
@@ -225,13 +251,22 @@ class Scraper (ChromDevWrapper, ABC):
             image = self.get_attrib (selector_image, "src")    
             title = self.get_text (selector_title)
             rate_num = self.get_text (selector_rate_num)
-            best_seller = self.get_text (selector_best_seller)
-            sales = self.get_text (selector_sales)
+            
+            if selector_best_seller:
+                best_seller = self.get_text (selector_best_seller)
+            else:
+                best_seller = False
+                
+            if selector_sales:
+                sales = self.get_text (selector_sales)
+            else:
+                sales = 0
             
             # Custom extract data
             reviews = self.__get_reviews__ (selector_reviews)
             link = self.get_product_link (selector_link)
-                            
+            rate_num = self.get_rate_num (selector_rate_num)
+            
             # Clean data 
             price = self.__get_clean_price__ (price)
             if not price:
@@ -242,11 +277,6 @@ class Scraper (ChromDevWrapper, ABC):
             
             if not image.startswith ("https"):
                 image = "https:" + image
-            
-            if rate_num:
-                rate_num = float(rate_num[0:3])
-            else:
-                rate_num = 0.0
             
             if reviews:
                 reviews = self.__clean_text__ (reviews, [",", " ", "+", "productratings"])
@@ -271,9 +301,6 @@ class Scraper (ChromDevWrapper, ABC):
                     sales = int(sales)
             else:
                 sales = 0
-                
-            # /Kingston-Renegade-Internal-SFYRDK-2000G/dp/B0BJL7MMNF/ref=sr_1_2?keywords=ssd&qid=1694888235&sr=8-2
-                
                 
             # TODO: add referral link
             

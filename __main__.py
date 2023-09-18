@@ -3,6 +3,7 @@ from threading import Thread
 from scraper_amazon import ScraperAmazon
 from scraper_aliexpress import ScraperAliexpress
 from scraper_ebay import ScraperEbay
+from scraper_target import ScraperTarget
 from dotenv import load_dotenv
 
 load_dotenv ()
@@ -10,8 +11,8 @@ USE_THREADING = os.getenv ("USE_THREADING") == "True"
 
 KEYWORD = "ssd"
 
-classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
-# classes = [ScraperAliexpress]
+classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay, ScraperTarget]
+# classes = [ScraperTarget]
 
 # Create instances
 instances = []
