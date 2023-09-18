@@ -159,6 +159,8 @@ class Scraper (ChromDevWrapper, ABC):
             rate_num = float(rate_num[0:3])
         else:
             rate_num = 0.0
+            
+        return rate_num
     
     def get_results (self) -> list:
         """ Get the results from the search link
@@ -250,8 +252,7 @@ class Scraper (ChromDevWrapper, ABC):
             # Extract text from self.selectors
             image = self.get_attrib (selector_image, "src")    
             title = self.get_text (selector_title)
-            rate_num = self.get_text (selector_rate_num)
-            
+                        
             if selector_best_seller:
                 best_seller = self.get_text (selector_best_seller)
             else:
@@ -323,9 +324,7 @@ class Scraper (ChromDevWrapper, ABC):
             # End loop when extract al required products
             if extracted_products >= MAX_PRODUCTS: 
                 break
-                
-        print (f"({self.store}) {extracted_products} products extracted")
-        
+                        
         # Save products in db
         Scraper.db.save_products (products_data)
         
