@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from chrome_dev.chrome_dev import ChromDevWrapper
 from abc import ABC, abstractmethod
 from db import Database
+from proxy import Proxy
 
 # read .env file
 load_dotenv ()
@@ -17,19 +18,13 @@ DB_PASSWORD = os.getenv ("DB_PASSWORD")
 DB_NAME = os.getenv ("DB_NAME")
 USE_PROXIES = os.getenv ("USE_PROXIES") == "True"
 USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
-
-CURRENT_FOLDER = os.path.dirname(__file__)
-PROXYES_PATH = os.path.join(CURRENT_FOLDER, "proxies.csv")
-
-with open (PROXYES_PATH, "r") as file:
-    reader = csv.reader (file)
-    PROXIES = list(reader)
     
 class Scraper (ChromDevWrapper, ABC):
     
     db = Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
     stores = db.get_stores ()
-    
+    proxy = Proxy ()
+        
     def __init__ (self, keyword:str):
         """ Start scraper
 
@@ -43,14 +38,14 @@ class Scraper (ChromDevWrapper, ABC):
         if USE_PROXIES:
         
             # Get random proxy
-            current_proxy = random.choice (PROXIES)
+            current_proxy = Scraper.proxy.get_proxy ()
             
             # Open chrome
             super().__init__ (
                 chrome_path=CHROME_PATH, 
                 start_killing=False, 
-                proxy_host=current_proxy[0], 
-                proxy_port=current_proxy[1]
+                proxy_host=current_proxy["proxy_address"], 
+                proxy_port=current_proxy["port"]
             )        
             
         else:
