@@ -113,21 +113,21 @@ class ScraperWalmart (Scraper):
             
         return False
     
-    def get_rate_num (self, selector:str) -> float:
-        """ Get product rate number with selector
+    # def get_rate_num (self, selector:str) -> float:
+    #     """ Get product rate number with selector
 
-        Args:
-            selector (str): css selector
+    #     Args:
+    #         selector (str): css selector
 
-        Returns:
-            float: product rate as float
-        """
+    #     Returns:
+    #         float: product rate as float
+    #     """
         
-        rate_num = self.get_text (selector)
+    #     rate_num = self.get_text (selector)
         
-        if rate_num:
-            rate_num = float(rate_num.split (" ")[0])
-        else:
-            rate_num = 0.0
+    #     if rate_num:
+    #         rate_num = float(rate_num.split (" ")[0])
+    #     else:
+    #         rate_num = 0.0
             
-        return rate_num
+    #     return rate_num

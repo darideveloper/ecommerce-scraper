@@ -152,7 +152,7 @@ class Scraper (ChromDevWrapper, ABC):
         rate_num = self.get_text (selector)
         
         if rate_num:
-            rate_num = float(rate_num[0:3])
+            rate_num = float(rate_num.split (" ")[0])
         else:
             rate_num = 0.0
             
