@@ -1,6 +1,4 @@
 import os
-import csv
-import random
 from time import sleep
 from dotenv import load_dotenv
 from chrome_dev.chrome_dev import ChromDevWrapper
