@@ -7,10 +7,10 @@ load_dotenv ()
 MAX_PRODUCTS = int(os.getenv ("MAX_PRODUCTS"))
 CHROME_PATH = os.getenv ("CHROME_PATH")
 
-class ScraperTarget (Scraper):
+class ScraperWalmart (Scraper):
     
     def __init__ (self, keyword:str):
-        """ Start scraper for target
+        """ Start scraper for walmart
 
         Args:
             keyword (str): product to search
@@ -21,23 +21,23 @@ class ScraperTarget (Scraper):
 
         # Css self.selectors
         self.selectors = {
-            'product': '.jZzlfv > .dOpyUp',
+            'product': 'div.ph1',
             'image': 'img',
-            'title': 'div[title] > a',
-            'rate_num': '[data-test="ratings"] > span',
-            'reviews': '[data-test="rating-count"]',
-            'sponsored': '[data-test="sponsoredText"]', 
-            'best_seller': '',
-            'price': '[data-test="current-price"] > span', 
+            'title': 'a > span',
+            'rate_num': 'div.mt2 .w_iUH7',
+            'reviews': 'div.mt2 span[aria-hidden]',
+            'sponsored': '', 
+            'best_seller': '.tag-leading-badge',
+            'price': '[data-automation-id="product-price"] .w_iUH7', 
             'sales': '',
-            'link': 'div[title] > a',
+            'link': 'a',
         }
         
-        self.store = "target"
+        self.store = "walmart"
         self.start_product = 1
         
     def __get_search_link__ (self, product:str) -> str:
-        """ Get the search link in target
+        """ Get the search link in walmart
 
         Args:
             product (str): product to search
@@ -47,10 +47,10 @@ class ScraperTarget (Scraper):
         """
         
         product_clean = product.replace (" ", "+")
-        return f" https://www.target.com/s?searchTerm={product_clean}&facetedValue=5zktx&sortBy=bestselling"
+        return f"https://www.walmart.com/search?country=US&q={product_clean}&sort=best_seller"
 
     def __get_is_sponsored__ (self, text:str) -> str:
-        """ Get if the product is sponsored in target
+        """ Get if the product is sponsored in walmart
 
         Args:
             text (str): sponsored text
@@ -59,10 +59,7 @@ class ScraperTarget (Scraper):
             bool: True if the product is sponsored
         """
         
-        if text:
-            return True
-        else:
-            return False
+        return False
     
     def __get_clean_price__ (self, text:str) -> str:
         """ Get product clean price in aliexpress
@@ -74,9 +71,9 @@ class ScraperTarget (Scraper):
             str: clean price
         """
         
-        # $49.99 - $104.99
+        # current price $39.99
         price_parts = text.split (" ")
-        price = price_parts[0].replace ("$", "").replace (",", "")
+        price = price_parts[-1].replace ("$", "").replace (",", "")
         
         if price.replace (".", "").isdigit ():
             return price
@@ -95,9 +92,26 @@ class ScraperTarget (Scraper):
         
         link = self.get_attrib (selector, "href")
         if not link.startswith ("https:"):
-            link = "https://www.target.com" + link
+            link = "https://www.walmart.com" + link
         
         return link
+    
+    def get_best_seller (self, selector:str) -> bool:
+        """ Get True if a product is a best seller
+
+        Args:
+            selector (str): css selector
+
+        Returns:
+            bool: True if the product is a best seller
+        """
+        
+        if selector:
+            best_seller = self.get_text (selector)
+            if best_seller and best_seller == "Best seller":
+                return True
+            
+        return False
     
     def get_rate_num (self, selector:str) -> float:
         """ Get product rate number with selector

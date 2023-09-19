@@ -78,16 +78,3 @@ class ScraperEbay (Scraper):
             return price
         else:
             return ""
-    
-    def __get_reviews__ (self, selector:str) -> str:
-        """ Get product reviews number as text
-        
-        Args:
-            selector (str): css selector
-
-        Returns:
-            str: reviews number as text
-        """
-        
-        reviews = self.get_text (selector)
-        return reviews

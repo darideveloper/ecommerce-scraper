@@ -70,10 +70,10 @@ class ScraperAmazon (Scraper):
             str: clean price
         """
         
-        price = self.__clean_text__ (text, ["$", "US "])
+        price = self.clean_text (text, ["$", "US "])
         return price
         
-    def __get_reviews__ (self, selector:str) -> str:
+    def get_reviews (self, selector:str) -> str:
         """ Get product reviews number as text
         
         Args:

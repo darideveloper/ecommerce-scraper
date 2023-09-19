@@ -94,8 +94,7 @@ class Scraper (ChromDevWrapper, ABC):
         """
         pass
     
-    @abstractmethod    
-    def __get_reviews__ (self, selector:str) -> str:
+    def get_reviews (self, selector:str) -> str:
         """ Abstract method to get product reviews number as text
         
         Args:
@@ -104,9 +103,11 @@ class Scraper (ChromDevWrapper, ABC):
         Returns:
             str: reviews number as text
         """
-        pass
+        
+        reviews = self.get_text (selector)
+        return reviews
     
-    def __clean_text__ (self, text:str, chars:list) -> str:
+    def clean_text (self, text:str, chars:list) -> str:
         """ Clean extra characters from text
 
         Args:
@@ -156,6 +157,23 @@ class Scraper (ChromDevWrapper, ABC):
             rate_num = 0.0
             
         return rate_num
+    
+    def get_best_seller (self, selector:str) -> bool:
+        """ Get True if a product is a best seller
+
+        Args:
+            selector (str): css selector
+
+        Returns:
+            bool: True if the product is a best seller
+        """
+        
+        if selector:
+            best_seller = self.get_text (selector)
+            if best_seller:
+                return True
+            
+        return False
     
     def get_results (self) -> list:
         """ Get the results from the search link
@@ -247,11 +265,6 @@ class Scraper (ChromDevWrapper, ABC):
             # Extract text from self.selectors
             image = self.get_attrib (selector_image, "src")    
             title = self.get_text (selector_title)
-                        
-            if selector_best_seller:
-                best_seller = self.get_text (selector_best_seller)
-            else:
-                best_seller = False
                 
             if selector_sales:
                 sales = self.get_text (selector_sales)
@@ -259,9 +272,10 @@ class Scraper (ChromDevWrapper, ABC):
                 sales = 0
             
             # Custom extract data
-            reviews = self.__get_reviews__ (selector_reviews)
+            reviews = self.get_reviews (selector_reviews)
             link = self.get_product_link (selector_link)
             rate_num = self.get_rate_num (selector_rate_num)
+            best_seller = self.get_best_seller (selector_best_seller)
             
             # Clean data 
             price = self.__get_clean_price__ (price)
@@ -269,24 +283,19 @@ class Scraper (ChromDevWrapper, ABC):
                 continue
             price = float(price)
             
-            title = self.__clean_text__ (title, [",", "'", '"'])
+            title = self.clean_text (title, [",", "'", '"'])
             
             if not image.startswith ("https"):
                 image = "https:" + image
             
             if reviews:
-                reviews = self.__clean_text__ (reviews, [",", " ", "+", "productratings"])
+                reviews = self.clean_text (reviews, [",", " ", "+", "productratings"])
                 reviews = int(reviews)
             else:
                 reviews = 0
                 
-            if best_seller:
-                best_seller = True
-            else:
-                best_seller = False
-                
             if sales:
-                sales = self.__clean_text__ (sales, ["(", ")", "+", ",", " ", "sold"])
+                sales = self.clean_text (sales, ["(", ")", "+", ",", " ", "sold"])
                 
                 # Convert "K" numbers
                 if "k" in sales.lower():
