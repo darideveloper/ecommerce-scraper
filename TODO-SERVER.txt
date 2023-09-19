@@ -1,0 +1,1 @@
+* ebay: check prices in usd

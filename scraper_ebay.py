@@ -26,9 +26,9 @@ class ScraperEbay (Scraper):
             'title': '.s-item__title',
             'rate_num': '.x-star-rating > span',
             'reviews': '.s-item__reviews-count > span:nth-child(1)',
-            'sponsored': '.s-item__sep div', # TODO: shadow root
+            'sponsored': '.s-item__sep div',
             'best_seller': '.s-item__etrs-text',
-            'price': '.s-item__price', # TODO: test in server usd prices
+            'price': '.s-item__price',
             'sales': '.s-item__quantitySold',
             'link': 'a',
         }
