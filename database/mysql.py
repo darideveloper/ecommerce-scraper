@@ -53,7 +53,7 @@ class MySQL ():
         connection.close()
         return results
     
-    def get_clean_text (text:str) -> str():
+    def get_clean_text (self, text:str) -> str():
         
         chars = [";", "--", "\b", "\r", "\t", "\n", "\f", "\v", "\0", "'", '"']
         for char in chars:

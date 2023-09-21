@@ -42,6 +42,10 @@ class Scraper (ChromDevWrapper, ABC):
             # Get random proxy
             current_proxy = Scraper.proxy.get_proxy ()
             
+            if self.store == "aliexpress":
+                current_proxy["proxy_address"] == "127.0.0.1"
+                current_proxy["port"] == "8080"
+            
             # Open chrome
             super().__init__ (
                 chrome_path=CHROME_PATH, 

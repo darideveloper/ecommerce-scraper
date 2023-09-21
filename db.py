@@ -82,3 +82,27 @@ class Database (MySQL):
         
         query = "delete from products"
         self.run_sql(query)
+        
+    def validate_token (self, token:str):
+        """ Validate if token exist in database and is active
+
+        Args:
+            token (str): api access token
+        """
+        
+        token = self.get_clean_text (token)
+        
+        query = f"""SELECT id 
+        FROM apikeys 
+        WHERE 
+            api_key = '{token}'
+            AND
+            is_active = 1
+        """
+        
+        api_key_found = self.run_sql (query)
+        
+        if api_key_found:
+            return True
+        else:
+            return False
