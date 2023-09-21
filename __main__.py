@@ -12,8 +12,8 @@ USE_THREADING = os.getenv ("USE_THREADING") == "True"
 
 KEYWORD = "ssd"
 
-# classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay, ScraperTarget, ScraperWalmart]
-classes = [ScraperEbay]
+classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay, ScraperTarget, ScraperWalmart]
+# classes = [ScraperEbay]
 
 # Create instances
 instances = []

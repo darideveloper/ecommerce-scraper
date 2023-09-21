@@ -35,7 +35,7 @@ class ChromDevWrapper ():
                 
             os.popen (command)
                 
-            sleep (5)
+            sleep (1)
         
         self.base_wait_time = 2
         

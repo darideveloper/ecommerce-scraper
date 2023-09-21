@@ -14,7 +14,6 @@ DB_HOST = os.getenv ("DB_HOST")
 DB_USER = os.getenv ("DB_USER")
 DB_PASSWORD = os.getenv ("DB_PASSWORD")
 DB_NAME = os.getenv ("DB_NAME")
-USE_PROXIES = os.getenv ("USE_PROXIES") == "True"
 USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
     
 class Scraper (ChromDevWrapper, ABC):
@@ -30,10 +29,15 @@ class Scraper (ChromDevWrapper, ABC):
             keyword (str): product to search
         """
         
+        # Child properties
+        # self.selectors = dict
+        # self.store = str
+        # self.start_product = int
+        
         # Scraper settings
         self.keyword = keyword       
         
-        if USE_PROXIES:
+        if Scraper.stores[self.store]["use_proxies"]:
         
             # Get random proxy
             current_proxy = Scraper.proxy.get_proxy ()

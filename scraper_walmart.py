@@ -16,8 +16,6 @@ class ScraperWalmart (Scraper):
             keyword (str): product to search
         """
         
-        # Send data to scraper
-        super().__init__ (keyword)
 
         # Css self.selectors
         self.selectors = {
@@ -36,6 +34,9 @@ class ScraperWalmart (Scraper):
         self.store = "walmart"
         self.start_product = 1
         
+        # Send data to scraper
+        super().__init__ (keyword)
+   
     def __get_search_link__ (self, product:str) -> str:
         """ Get the search link in walmart
 

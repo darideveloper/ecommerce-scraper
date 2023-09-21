@@ -22,13 +22,16 @@ class Database (MySQL):
             
             {
                 "amazon": {
-                    "id": 1
+                    "id": 1,
+                    "use_proxies": 1
                 },
                 "aliexpress": {
-                    "id": 2
+                    "id": 2,
+                    "use_proxies": 1
                 },
                 "ebay": {
-                    "id": 3
+                    "id": 3,
+                    "use_proxies": 0
                 },
                 ...
             }
@@ -40,7 +43,10 @@ class Database (MySQL):
         
         data = {}
         for row in results:
-            data[row["name"]] = {"id": row["id"]}
+            data[row["name"]] = {
+                "id": row["id"],
+                "use_proxies": row["use_proxies"]
+            }
         
         return data
     

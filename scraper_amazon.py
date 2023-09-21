@@ -16,8 +16,6 @@ class ScraperAmazon (Scraper):
             keyword (str): product to search
         """
         
-        # Send data to scraper
-        super().__init__ (keyword)
 
         # Css self.selectors
         self.selectors = {
@@ -35,6 +33,9 @@ class ScraperAmazon (Scraper):
         
         self.store = "amazon"
         self.start_product = 6
+  
+        # Send data to scraper
+        super().__init__ (keyword)
         
     def __get_search_link__ (self, product:str) -> str:
         """ Get the search link in amazon

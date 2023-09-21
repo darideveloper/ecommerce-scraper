@@ -16,8 +16,6 @@ class ScraperEbay (Scraper):
             keyword (str): product to search
         """
         
-        # Send data to scraper
-        super().__init__ (keyword)
 
         # Css self.selectors
         self.selectors = {
@@ -35,6 +33,9 @@ class ScraperEbay (Scraper):
         
         self.store = "ebay"
         self.start_product = 2
+        
+        # Send data to scraper
+        super().__init__ (keyword)
         
     def __get_search_link__ (self, product:str) -> str:
         """ Get the search link in ebay
