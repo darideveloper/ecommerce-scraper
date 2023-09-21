@@ -335,3 +335,6 @@ class Scraper (ChromDevWrapper, ABC):
         Scraper.db.save_products (products_data)
         
         print (f"({self.store}) {extracted_products} products saved")
+        
+        # Close chrome windows
+        self.quit ()
