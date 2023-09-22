@@ -12,10 +12,11 @@ DB_USER = os.getenv ("DB_USER")
 DB_PASSWORD = os.getenv ("DB_PASSWORD")
 DB_NAME = os.getenv ("DB_NAME")
 USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
+USE_THREADING = os.getenv ("USE_THREADING") == "True"
 
 # Connect with database
-db = Database(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
-
+db = Database(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)    
+    
 @app.post ('/keyword/')
 def start_scraper ():
     """ Initilize scraper in background """
@@ -30,7 +31,7 @@ def start_scraper ():
         return ({
             "status": "error",
             "message": "Keyword and api-key are required",
-            "data": []
+            "data": {}
         }, 400)
     
     # Validate if token exist in db
@@ -39,17 +40,20 @@ def start_scraper ():
         return ({
             "status": "error",
             "message": "Invalid api-key",
-            "data": []
+            "data": {}
         }, 401)
     
-    # TODO: save request in db
+    # save request in db
+    request_id = db.create_new_request (api_key)
     
     # TODO: initialize web scraper in background
     
     return {
         "status": "success",
         "message": "Scraper started in background",
-        "data": []
+        "data": {
+            "request-id": request_id
+        }
     }
 
 

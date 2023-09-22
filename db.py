@@ -1,3 +1,4 @@
+from datetime import datetime
 from database.mysql import MySQL
 
 class Database (MySQL):
@@ -14,6 +15,50 @@ class Database (MySQL):
         
         super().__init__(server, database, username, password)
         
+        self.status = self.__get_status__ ()
+        self.api_keys = self.__get_api_keys__ ()
+    
+    def __get_status__ (self) -> dict:
+        """ Retuen status from database as dictionary
+
+        Returns:
+            dict: status
+            {
+                "to do": 1,
+                "working": 2,
+                "done": 3
+            }
+        """
+        
+        query = "SELECT * FROM status"
+        data = self.run_sql (query)
+        
+        status = {}
+        for row in data:
+            status[row["name"]] = row["id"]
+            
+        return status
+    
+    def __get_api_keys__ (self) -> dict:
+        """ Retuen api keys from database as dictionary
+
+        Returns:
+            dict: status
+            {
+                "api-key-1": 1,
+                "api-key-2": 2,
+            }
+        """
+        
+        query = "SELECT * FROM apikeys"
+        data = self.run_sql (query)
+        
+        status = {}
+        for row in data:
+            status[row["api_key"]] = row["id"]
+            
+        return status
+    
     def get_stores (self) -> dict:
         """ Query current stores in database 
         
@@ -71,8 +116,10 @@ class Database (MySQL):
             id_store = product["id_store"]
             
             # Generate sql query
-            query = f"""INSERT INTO products (image, title, rate_num, reviews, price, best_seller, sales, link, id_store) 
-            VALUES ('{image}', '{title}', {rate_num}, {reviews}, {price}, {best_seller}, {sales}, '{link}', {id_store}); """.replace ("\n", "")
+            query = f"""
+                INSERT INTO products (image, title, rate_num, reviews, price, best_seller, sales, link, id_store) 
+                VALUES ('{image}', '{title}', {rate_num}, {reviews}, {price}, {best_seller}, {sales}, '{link}', {id_store}); 
+            """.replace ("\n", "")
                             
             # Save data
             self.run_sql(query)
@@ -92,12 +139,13 @@ class Database (MySQL):
         
         token = self.get_clean_text (token)
         
-        query = f"""SELECT id 
-        FROM apikeys 
-        WHERE 
-            api_key = '{token}'
-            AND
-            is_active = 1
+        query = f"""
+            SELECT id 
+            FROM apikeys 
+            WHERE 
+                api_key = '{token}'
+                AND
+                is_active = 1
         """
         
         api_key_found = self.run_sql (query)
@@ -106,3 +154,43 @@ class Database (MySQL):
             return True
         else:
             return False
+                
+    def create_new_request (self, api_key:str) -> int:
+        """  Save a new request in database with status "to do" 
+        
+        Args:
+            api_key (str): api access token
+            
+        Returns:
+            int: id of new request
+        """
+        
+        # Get status for new requests
+        status_todo_id = self.status["to do"]
+        
+        # Get api key id
+        api_key_id = self.api_keys[api_key] 
+        
+        # get and fomat current datetime
+        current_datetime = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        # Save new request
+        query = f"""
+            INSERT INTO requests (status, todo_datetime, api_key) 
+            VALUES ({status_todo_id}, '{current_datetime}', {api_key_id})
+        """
+        self.run_sql (query)
+        
+        # Query id of new request
+        query = f"""
+            SELECT id 
+            FROM requests
+            WHERE
+                status = {status_todo_id}
+                AND
+                api_key = {api_key_id}
+                AND
+                todo_datetime = '{current_datetime}'
+        """
+        id = self.run_sql (query)[0]["id"]
+        return id
