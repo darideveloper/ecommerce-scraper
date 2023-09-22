@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from scraper import Scraper
+from db import Database
 
 # read .env file
 load_dotenv ()
@@ -9,13 +10,13 @@ CHROME_PATH = os.getenv ("CHROME_PATH")
 
 class ScraperWalmart (Scraper):
     
-    def __init__ (self, keyword:str):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper for walmart
 
         Args:
             keyword (str): product to search
+            db (Database): database instance
         """
-        
 
         # Css self.selectors
         self.selectors = {
@@ -29,26 +30,26 @@ class ScraperWalmart (Scraper):
             'price': '[data-automation-id="product-price"] .w_iUH7', 
             'sales': '',
             'link': 'a',
+            "search_bar": '',
+            "search_btn": '',
         }
         
         self.store = "walmart"
         self.start_product = 1
         
         # Send data to scraper
-        super().__init__ (keyword)
+        super().__init__ (keyword, db)
    
-    def __get_search_link__ (self, product:str) -> str:
-        """ Get the search link in walmart
+    def __load_page__ (self, product:str):
+        """ Load walmart search page
 
         Args:
             product (str): product to search
-
-        Returns:
-            str: store search link
         """
         
         product_clean = product.replace (" ", "+")
-        return f"https://www.walmart.com/search?country=US&q={product_clean}&sort=best_seller"
+        link = f"https://www.walmart.com/search?country=US&q={product_clean}&sort=best_seller"
+        self.set_page (link)
 
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in walmart

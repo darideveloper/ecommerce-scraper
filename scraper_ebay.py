@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from scraper import Scraper
+from db import Database
 
 # read .env file
 load_dotenv ()
@@ -9,13 +10,13 @@ CHROME_PATH = os.getenv ("CHROME_PATH")
 
 class ScraperEbay (Scraper):
     
-    def __init__ (self, keyword:str):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper for ebay
 
         Args:
             keyword (str): product to search
+            db (Database): database instance
         """
-        
 
         # Css self.selectors
         self.selectors = {
@@ -29,26 +30,26 @@ class ScraperEbay (Scraper):
             'price': '.s-item__price',
             'sales': '.s-item__quantitySold',
             'link': 'a',
+            "search_bar": '',
+            "search_btn": '',
         }
         
         self.store = "ebay"
         self.start_product = 2
         
         # Send data to scraper
-        super().__init__ (keyword)
+        super().__init__ (keyword, db)
         
-    def __get_search_link__ (self, product:str) -> str:
-        """ Get the search link in ebay
+    def __load_page__ (self, product:str):
+        """ Load ebay search page
 
         Args:
             product (str): product to search
-
-        Returns:
-            str: store search link
         """
         
         product_clean = product.replace (" ", "+")  
-        return f"https://www.ebay.com/sch/i.html?_nkw={product_clean}&LH_BIN=1&rt=nc&LH_ItemCondition=1000&LH_BIN=1&_fcid=1"
+        link = f"https://www.ebay.com/sch/i.html?_nkw={product_clean}&LH_BIN=1&rt=nc&LH_ItemCondition=1000&LH_BIN=1&_fcid=1"
+        self.set_page (link)
 
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in ebay

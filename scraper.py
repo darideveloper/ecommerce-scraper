@@ -10,23 +10,18 @@ from proxy import Proxy
 load_dotenv ()
 MAX_PRODUCTS = int(os.getenv ("MAX_PRODUCTS"))
 CHROME_PATH = os.getenv ("CHROME_PATH")
-DB_HOST = os.getenv ("DB_HOST")
-DB_USER = os.getenv ("DB_USER")
-DB_PASSWORD = os.getenv ("DB_PASSWORD")
-DB_NAME = os.getenv ("DB_NAME")
 USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
     
 class Scraper (ChromDevWrapper, ABC):
     
-    db = Database (DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
-    stores = db.get_stores ()
     proxy = Proxy ()
         
-    def __init__ (self, keyword:str):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper
 
         Args:
             keyword (str): product to search
+            db (Database): database instance
         """
         
         # Child properties
@@ -35,9 +30,11 @@ class Scraper (ChromDevWrapper, ABC):
         # self.start_product = int
         
         # Scraper settings
-        self.keyword = keyword       
+        self.keyword = keyword    
+        self.db = db
+        self.stores = db.get_stores ()   
         
-        if Scraper.stores[self.store]["use_proxies"]:
+        if self.stores[self.store]["use_proxies"]:
         
             # Get random proxy
             current_proxy = Scraper.proxy.get_proxy ()
@@ -65,14 +62,11 @@ class Scraper (ChromDevWrapper, ABC):
             self.db.delete_products ()
     
     @abstractmethod
-    def __get_search_link__ (self, product:str) -> str:
+    def __load_page__ (self, product:str):
         """ Abstract method to get the search link
 
         Args:
             product (str): product to search
-
-        Returns:
-            str: store search link
         """
         pass
     
@@ -206,8 +200,7 @@ class Scraper (ChromDevWrapper, ABC):
         print (f"({self.store}) Searching products...")
 
         # Open chrome and load results page
-        search_link = self.__get_search_link__ (product)
-        self.set_page (search_link)
+        self.__load_page__ (product)
         self.set_zoom (0.2)
         self.go_down ()
         sleep (2)
@@ -274,6 +267,7 @@ class Scraper (ChromDevWrapper, ABC):
                 
             if selector_sales:
                 sales = self.get_text (selector_sales)
+                sales = sales.split (" ")[0]
             else:
                 sales = 0
             
@@ -328,7 +322,7 @@ class Scraper (ChromDevWrapper, ABC):
                 "best_seller": best_seller,
                 "sales": sales,
                 "link": link,
-                "id_store": Scraper.stores[self.store]["id"]
+                "id_store": self.stores[self.store]["id"]
             })
             
             # End loop when extract al required products
@@ -336,7 +330,7 @@ class Scraper (ChromDevWrapper, ABC):
                 break
                         
         # Save products in db
-        Scraper.db.save_products (products_data)
+        self.db.save_products (products_data)
         
         print (f"({self.store}) {extracted_products} products saved")
         

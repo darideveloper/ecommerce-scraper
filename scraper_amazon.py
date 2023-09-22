@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from scraper import Scraper
+from db import Database
 
 # read .env file
 load_dotenv ()
@@ -9,13 +10,13 @@ CHROME_PATH = os.getenv ("CHROME_PATH")
 
 class ScraperAmazon (Scraper):
     
-    def __init__ (self, keyword:str):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper for amazon
 
         Args:
             keyword (str): product to search
+            db (Database): database instance
         """
-        
 
         # Css self.selectors
         self.selectors = {
@@ -29,25 +30,25 @@ class ScraperAmazon (Scraper):
             'price': 'a.a-size-base .a-offscreen',
             'sales': '.a-row.a-size-base > span.a-color-secondary:only-child',
             'link': 'a',
+            "search_bar": '',
+            "search_btn": '',
         }
         
         self.store = "amazon"
         self.start_product = 6
   
         # Send data to scraper
-        super().__init__ (keyword)
+        super().__init__ (keyword, db)
         
-    def __get_search_link__ (self, product:str) -> str:
-        """ Get the search link in amazon
+    def __load_page__ (self, product:str):
+        """ Load amazon search page
 
         Args:
             product (str): product to search
-
-        Returns:
-            str: store search link
         """
         
-        return f"https://www.amazon.com/s?k={product}&s=review-rank"
+        link = f"https://www.amazon.com/s?k={product}&s=review-rank"
+        self.set_page (link)
 
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in amazon

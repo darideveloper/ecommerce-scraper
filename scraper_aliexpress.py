@@ -1,6 +1,8 @@
 import os
+from time import sleep
 from dotenv import load_dotenv
 from scraper import Scraper
+from db import Database
 
 # read .env file
 load_dotenv ()
@@ -9,11 +11,12 @@ CHROME_PATH = os.getenv ("CHROME_PATH")
 
 class ScraperAliexpress (Scraper):
     
-    def __init__ (self, keyword:str):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper for aliexpress
 
         Args:
             keyword (str): product to search
+            db (Database): database instance
         """
 
         # Css self.selectors
@@ -28,28 +31,30 @@ class ScraperAliexpress (Scraper):
             'price': '[class*="price-sale"]',
             'sales': '[class*="trade-"]',
             'link': '',
+            "search_bar": '#search-key',
+            "search_btn": '.search-button',
         }
         
         self.store = "aliexpress"
         self.start_product = 1
         
         # Send data to scraper
-        super().__init__ (keyword)
+        super().__init__ (keyword, db)
         
-    def __get_search_link__ (self, product:str) -> str:
-        """ Get the search link in aliexpress
+    def __load_page__ (self, product:str):
+        """ Write a text in the search bar
 
         Args:
             product (str): product to search
-
-        Returns:
-            str: store search link
         """
-
-        product_clean = product.replace (" ", "-")
-        return f"https://www.aliexpress.com/w/wholesale-{product_clean}.html?g=y&trafficChannel=main&isMall=y&sortType=total_tranpro_desc&isFavorite=y"
-
-
+        
+        self.set_page ("https://www.aliexpress.com/")
+        sleep (1)
+        self.send_data (self.selectors["search_bar"], product)
+        sleep (1)
+        self.click (self.selectors["search_btn"])
+        sleep (1)
+       
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in aliexpress
 

@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from scraper import Scraper
+from db import Database
 
 # read .env file
 load_dotenv ()
@@ -9,13 +10,13 @@ CHROME_PATH = os.getenv ("CHROME_PATH")
 
 class ScraperTarget (Scraper):
     
-    def __init__ (self, keyword:str):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper for target
 
         Args:
             keyword (str): product to search
+            db (Database): database instance
         """
-        
 
         # Css self.selectors
         self.selectors = {
@@ -29,27 +30,27 @@ class ScraperTarget (Scraper):
             'price': '[data-test="current-price"] > span', 
             'sales': '',
             'link': 'div[title] > a',
+            "search_bar": '',
+            "search_btn": '',
         }
         
         self.store = "target"
         self.start_product = 1
      
         # Send data to scraper
-        super().__init__ (keyword)
+        super().__init__ (keyword, db)
         
-    def __get_search_link__ (self, product:str) -> str:
-        """ Get the search link in target
+    def __load_page__ (self, product:str):
+        """ Load target search page
 
         Args:
             product (str): product to search
-
-        Returns:
-            str: store search link
         """
         
         product_clean = product.replace (" ", "+")
-        return f" https://www.target.com/s?searchTerm={product_clean}&facetedValue=5zktx&sortBy=bestselling"
-
+        link = f" https://www.target.com/s?searchTerm={product_clean}&facetedValue=5zktx&sortBy=bestselling"
+        self.set_page (link)
+        
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in target
 

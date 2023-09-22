@@ -33,4 +33,4 @@ def start_scrapers (keyword:str):
         instance = class_elem(keyword, db)
         instance.get_results ()
         
-start_scrapers ()
+start_scrapers ("protein")
