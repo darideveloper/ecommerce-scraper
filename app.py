@@ -1,6 +1,7 @@
 import os
-from flask import Flask, request
+from threading import Thread
 from db import Database
+from flask import Flask, request
 from dotenv import load_dotenv
 from scraper_amazon import ScraperAmazon
 from scraper_aliexpress import ScraperAliexpress
@@ -29,13 +30,12 @@ def start_scrapers (keyword:str):
         keyword (str): _description_
     """
     
-    classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay, ScraperTarget, ScraperWalmart]
+    classes = [ScraperAliexpress, ScraperTarget, ScraperWalmart]
     # classes = [ScraperEbay]
         
     for class_elem in classes:
         instance = class_elem(keyword, db)
         instance.get_results ()
-
     
 @app.post ('/keyword/')
 def start_scraper ():
@@ -67,7 +67,8 @@ def start_scraper ():
     request_id = db.create_new_request (api_key)
     
     # initialize web scraper in background
-    start_scrapers (keyword)
+    thread_scrapers = Thread (target=start_scrapers, args=(keyword,))
+    thread_scrapers.start ()
     
     return {
         "status": "success",

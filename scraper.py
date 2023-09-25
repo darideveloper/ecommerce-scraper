@@ -47,8 +47,8 @@ class Scraper (ChromDevWrapper, ABC):
             super().__init__ (
                 chrome_path=CHROME_PATH, 
                 start_killing=False, 
-                proxy_host=current_proxy["proxy_address"], 
-                proxy_port=current_proxy["port"]
+                proxy_host=current_proxy["proxy_address"],
+                proxy_port=current_proxy["port"],
             )        
             
         else:
