@@ -26,7 +26,7 @@ def start_scrapers (keyword:str):
         keyword (str): _description_
     """
     
-    classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay, ScraperTarget, ScraperWalmart]
+    classes = [ScraperAliexpress, ScraperWalmart]
     # classes = [ScraperEbay]
         
     for class_elem in classes:

@@ -48,7 +48,7 @@ class ScraperTarget (Scraper):
         """
         
         product_clean = product.replace (" ", "+")
-        link = f" https://www.target.com/s?searchTerm={product_clean}&facetedValue=5zktx&sortBy=bestselling"
+        link = f"https://www.target.com/s?searchTerm={product_clean}&facetedValue=5zktx&sortBy=bestselling"
         self.set_page (link)
         
     def __get_is_sponsored__ (self, text:str) -> str:

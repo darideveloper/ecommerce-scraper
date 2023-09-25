@@ -1,7 +1,7 @@
 import os
 from time import sleep
 from dotenv import load_dotenv
-from chrome_dev.chrome_dev import ChromDevWrapper
+from scraping.web_scraping import WebScraping
 from abc import ABC, abstractmethod
 from db import Database
 from proxy import Proxy
@@ -9,10 +9,10 @@ from proxy import Proxy
 # read .env file
 load_dotenv ()
 MAX_PRODUCTS = int(os.getenv ("MAX_PRODUCTS"))
-CHROME_PATH = os.getenv ("CHROME_PATH")
+CHROME_FOLDER = os.getenv ("CHROME_FOLDER")
 USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
     
-class Scraper (ChromDevWrapper, ABC):
+class Scraper (WebScraping, ABC):
     
     proxy = Proxy ()
         
@@ -45,17 +45,13 @@ class Scraper (ChromDevWrapper, ABC):
             
             # Open chrome
             super().__init__ (
-                chrome_path=CHROME_PATH, 
-                start_killing=False, 
-                proxy_host=current_proxy["proxy_address"],
+                proxy_server=current_proxy["proxy_address"],
                 proxy_port=current_proxy["port"],
+                chrome_folder=CHROME_FOLDER
             )        
             
         else:
-            super().__init__ (
-                chrome_path=CHROME_PATH, 
-                start_killing=False, 
-            )       
+            super().__init__ (chrome_folder=CHROME_FOLDER)       
         
         # Delete products in debug mode
         if USE_DEBUG:
@@ -201,12 +197,11 @@ class Scraper (ChromDevWrapper, ABC):
 
         # Open chrome and load results page
         self.__load_page__ (product)
-        self.set_zoom (0.2)
-        self.go_down ()
+        self.go_bottom ()
         sleep (2)
 
         # get the results in the page
-        results_num = self.count_elems (self.selectors['product'])
+        results_num = len(self.get_elems (self.selectors['product']))
 
         # Validate if there are results
         if results_num == 0:
@@ -335,4 +330,4 @@ class Scraper (ChromDevWrapper, ABC):
         print (f"({self.store}) {extracted_products} products saved")
         
         # Close chrome windows
-        self.quit ()
+        self.kill ()
