@@ -40,7 +40,7 @@ class ScraperAliexpress (Scraper):
         self.start_product = 1
         
         # Get proxy from pyproxy
-        proxy_data = Scraper.proxy.get_proxy_webshare ()
+        proxy_data = Scraper.proxy.get_proxy_pyproxy ()
         
         # Send data to scraper
         super().__init__ (

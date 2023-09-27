@@ -20,14 +20,14 @@ class ScraperAmazon (Scraper):
 
         # Css self.selectors
         self.selectors = {
-            'product': '[data-asin][data-uuid]',
+            'product': 'div[data-asin][data-uuid]',
             'image': 'img',
             'title': 'h2',
             'rate_num': 'span[aria-label]:nth-child(1)',
             'reviews': 'span[aria-label]:nth-child(2)',
             'sponsored': '[aria-label~="Sponsored"]',
             'best_seller': '.a-row.a-badge-region',
-            'price': 'a.a-size-base .a-offscreen',
+            'price': 'a.a-size-base span[aria-hidden]:nth-child(2)',
             'sales': '.a-row.a-size-base > span.a-color-secondary:only-child',
             'link': 'a',
             "search_bar": '',
@@ -35,10 +35,10 @@ class ScraperAmazon (Scraper):
         }
         
         self.store = "amazon"
-        self.start_product = 6
+        self.start_product = 7
         
         # Get proxy from pyproxy
-        proxy_data = Scraper.proxy.get_proxy_webshare ()
+        proxy_data = Scraper.proxy.get_proxy_pyproxy ()
         
         # Send data to scraper
         super().__init__ (
@@ -81,6 +81,7 @@ class ScraperAmazon (Scraper):
         """
         
         price = self.clean_text (text, ["$", "US "])
+        price = price.replace ("\n", ".")
         return price
         
     def get_reviews (self, selector:str) -> str:
@@ -109,3 +110,22 @@ class ScraperAmazon (Scraper):
         link = self.get_attrib (selector, "href")
         link = "https://www.amazon.com" + link
         return link
+    
+    def get_rate_num (self, selector:str) -> float:
+        """ Get product rate number with selector
+
+        Args:
+            selector (str): css selector
+
+        Returns:
+            float: product rate as float
+        """
+        
+        rate_num = self.get_attrib (selector, "aria-label")
+        
+        if rate_num:
+            rate_num = float(rate_num.split (" ")[0])
+        else:
+            rate_num = 0.0
+            
+        return rate_num

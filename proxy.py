@@ -109,19 +109,6 @@ class Proxy ():
             }
         """
         
-        # res = requests.get (
-        #     "https://dashboard.iproyal.com/api/residential/royal/reseller/access/generate-proxy-list",
-        #     headers={
-        #         "X-Access-Token": "Bearer 4008c1e977e9edbd162f48d96edff505f64705d0228a0cae5ca03cb56e4b",
-        #         "Content-Type": "application/json",
-        #     },
-        #     data={
-        #         "username": "webmarketingstock@gmail.com",
-        #         "password": "IPRoyal3.1416",
-        #         "proxyCount": 5
-        #     }
-        # )
-        
         return {
             "proxy_address": "geo.iproyal.com",
             "port": 12321

@@ -42,7 +42,6 @@ class Scraper (WebScraping, ABC):
             super().__init__ (
                 proxy_server=proxy_server,
                 proxy_port=proxy_port,
-                chrome_folder=CHROME_FOLDER
             )        
             
         else:
@@ -192,8 +191,11 @@ class Scraper (WebScraping, ABC):
 
         # Open chrome and load results page
         self.__load_page__ (product)
+        self.zoom (5)
         self.go_bottom ()
-        sleep (2)
+        self.refresh_selenium ()
+        
+        self.save_page ("temp.html")
 
         # get the results in the page
         results_num = len(self.get_elems (self.selectors['product']))
@@ -279,7 +281,7 @@ class Scraper (WebScraping, ABC):
                 image = "https:" + image
             
             if reviews:
-                reviews = self.clean_text (reviews, [",", " ", "+", "productratings"])
+                reviews = self.clean_text (reviews, [",", " ", "+", "productratings", "productrating"])
                 reviews = int(reviews)
             else:
                 reviews = 0

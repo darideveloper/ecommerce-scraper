@@ -3,8 +3,8 @@ from threading import Thread
 from db import Database
 from dotenv import load_dotenv
 from scraper import Scraper
-from scraper_amazon import ScraperAmazon
 from scraper_aliexpress import ScraperAliexpress
+from scraper_amazon import ScraperAmazon
 from scraper_ebay import ScraperEbay
 
 # Load env variables
@@ -37,7 +37,7 @@ def start_scrapers (keyword:str):
         keyword (str): _description_
     """
     
-    classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
+    classes = [ScraperAliexpress, ScraperAmazon, ScraperEbay]
     
     for class_elem in classes:
         
