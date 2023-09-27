@@ -31,6 +31,7 @@ class ScraperAliexpress (Scraper):
             'price': '[class*="price-sale"]',
             'sales': '[class*="trade-"]',
             'link': '',
+            
             "search_bar": '#search-key',
             "search_btn": '.search-button',
         }
@@ -38,8 +39,16 @@ class ScraperAliexpress (Scraper):
         self.store = "aliexpress"
         self.start_product = 1
         
+        # Get proxy from pyproxy
+        proxy_data = Scraper.proxy.get_proxy_webshare ()
+        
         # Send data to scraper
-        super().__init__ (keyword, db)
+        super().__init__ (
+            keyword, 
+            db, 
+            proxy_data["proxy_address"], 
+            proxy_data["port"]
+        )
         
     def __load_page__ (self, product:str):
         """ Write a text in the search bar
@@ -50,6 +59,8 @@ class ScraperAliexpress (Scraper):
         
         self.set_page ("https://www.aliexpress.com/")
         sleep (1)
+        self.refresh_selenium ()
+        
         self.send_data (self.selectors["search_bar"], product)
         sleep (1)
         self.click (self.selectors["search_btn"])

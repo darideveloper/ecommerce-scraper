@@ -37,8 +37,16 @@ class ScraperEbay (Scraper):
         self.store = "ebay"
         self.start_product = 2
         
+        # Get proxy from pyproxy
+        proxy_data = Scraper.proxy.get_proxy_webshare ()
+        
         # Send data to scraper
-        super().__init__ (keyword, db)
+        super().__init__ (
+            keyword, 
+            db, 
+            proxy_data["proxy_address"], 
+            proxy_data["port"]
+        )
         
     def __load_page__ (self, product:str):
         """ Load ebay search page

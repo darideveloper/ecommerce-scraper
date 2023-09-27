@@ -16,12 +16,14 @@ class Scraper (WebScraping, ABC):
     
     proxy = Proxy ()
         
-    def __init__ (self, keyword:str, db:Database):
+    def __init__ (self, keyword:str, db:Database, proxy_server:str="", proxy_port:int=0):
         """ Start scraper
 
         Args:
             keyword (str): product to search
             db (Database): database instance
+            proxy_server (str): proxy server address
+            proxy_port (int): proxy port
         """
         
         # Child properties
@@ -36,22 +38,15 @@ class Scraper (WebScraping, ABC):
         
         if self.stores[self.store]["use_proxies"]:
         
-            # Get random proxy
-            current_proxy = Scraper.proxy.get_proxy ()
-            
-            if self.store == "aliexpress":
-                current_proxy["proxy_address"] == "127.0.0.1"
-                current_proxy["port"] == "8080"
-            
             # Open chrome
             super().__init__ (
-                proxy_server=current_proxy["proxy_address"],
-                proxy_port=current_proxy["port"],
+                proxy_server=proxy_server,
+                proxy_port=proxy_port,
                 chrome_folder=CHROME_FOLDER
             )        
             
         else:
-            super().__init__ (chrome_folder=CHROME_FOLDER)       
+            super().__init__ ()       
         
         # Delete products in debug mode
         if USE_DEBUG:

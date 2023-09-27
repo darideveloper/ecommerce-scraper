@@ -11,12 +11,33 @@ class Proxy ():
     def __init__ (self):
         """ Auto load proxies from webshare """
         
-        self.proxies = []
+        self.proxies_webshare = self.__load_proxies_webshare__ ()
         
-        self.__load_proxies__ ()
+    def __load_proxies_webshare__ (self) -> list:
+        """ Save webshare USA proxies, as class variable 
         
-    def __load_proxies__ (self):
-        """ Save webshare USA proxies, as class variable """
+        Returns:
+            list: list of proxies
+            
+            [
+                {
+                    "id": str,
+                    "username": str,
+                    "password": str,
+                    "proxy_address": str,
+                    "port": int,
+                    "valid": bool,
+                    "last_verification": datetime (iso),
+                    "country_code": str,
+                    "city_name": str,
+                    "asn_name": str,
+                    "asn_number": int,
+                    "high_country_confidence": bool,
+                    "created_at": datetime (iso),
+                },
+                ...
+            ]
+        """
         
         # Query tokens from webshare
         res = requests.get (
@@ -32,11 +53,9 @@ class Proxy ():
         proxies = json_data["results"]
         
         # Filter USA proxies
-        self.proxies = list(filter(lambda proxy: proxy["country_code"] == "US", proxies))
-        
-        print ()
-        
-    def get_proxy (self) -> dict:
+        return list(filter(lambda proxy: proxy["country_code"] == "US", proxies))
+                
+    def get_proxy_webshare (self) -> dict:
         """ Return a random proxy from webshare
 
         Returns:
@@ -58,4 +77,52 @@ class Proxy ():
             }
         """
         
-        return random.choice (self.proxies)
+        return random.choice (self.proxies_webshare)
+    
+    def get_proxy_pyproxy (self) -> dict:
+        """ Get proxy from pyproxy
+
+        Returns:
+            dict: proxy data
+            {
+                "proxy_address": str,
+                "port": int
+            }
+        """
+        
+        res = requests.get ("https://acq.iemoapi.com/getProxyIp?protocol=http&num=1&regions=us&lb=1&return_type=txt")
+        proxy = res.text.split (":")
+        
+        return {
+            "proxy_address": proxy[0],
+            "port": int(proxy[1].replace ("\r\n", ""))
+        }
+        
+    def get_proxy_iproyal (self) -> dict:
+        """ Get proxy from iproyal
+
+        Returns:
+            dict: proxy data
+            {
+                "proxy_address": str,
+                "port": int
+            }
+        """
+        
+        # res = requests.get (
+        #     "https://dashboard.iproyal.com/api/residential/royal/reseller/access/generate-proxy-list",
+        #     headers={
+        #         "X-Access-Token": "Bearer 4008c1e977e9edbd162f48d96edff505f64705d0228a0cae5ca03cb56e4b",
+        #         "Content-Type": "application/json",
+        #     },
+        #     data={
+        #         "username": "webmarketingstock@gmail.com",
+        #         "password": "IPRoyal3.1416",
+        #         "proxyCount": 5
+        #     }
+        # )
+        
+        return {
+            "proxy_address": "geo.iproyal.com",
+            "port": 12321
+        }
