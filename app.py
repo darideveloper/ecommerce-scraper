@@ -3,6 +3,7 @@ from threading import Thread
 from db import Database
 from flask import Flask, request
 from dotenv import load_dotenv
+from scraper import Scraper
 from scraper_amazon import ScraperAmazon
 from scraper_aliexpress import ScraperAliexpress
 from scraper_ebay import ScraperEbay
@@ -23,6 +24,17 @@ USE_THREADING = os.getenv ("USE_THREADING") == "True"
 # Connect with database
 db = Database(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
 
+def start_scraper (scraper_class:Scraper, keyword:str):
+    """ SStart an specific scraper and extract data
+
+    Args:
+        scraper_class (Scraper): Scraper class
+        keyword (str): keyword to search
+    """
+    
+    scraper = scraper_class (keyword, db)
+    scraper.get_results ()
+
 def start_scrapers (keyword:str):
     """ Start all scrapers
 
@@ -31,13 +43,17 @@ def start_scrapers (keyword:str):
     """
     
     classes = [ScraperAliexpress, ScraperTarget, ScraperWalmart]
-    # classes = [ScraperEbay]
-        
-    for class_elem in classes:
-        instance = class_elem(keyword, db)
-        instance.get_results ()
     
-@app.post ('/keyword/')
+    for class_elem in classes:
+        
+        # Run functions with and without threads
+        if USE_THREADING:
+            thread_scraper = Thread (target=start_scraper, args=(class_elem, keyword))
+            thread_scraper.start ()
+        else:
+            start_scraper (class_elem, keyword)
+    
+@app.post ('/results/')
 def start_scraper ():
     """ Initilize scraper in background """
     
