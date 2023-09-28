@@ -38,7 +38,7 @@ def start_scraper (scraper_class:Scraper, keyword:str):
     scraper = scraper_class (keyword, db)
     scraper.get_results ()
     
-    # random_wait_time = random.randint (10, 20)
+    # random_wait_time = random.randint (15, 30)
     # sleep (random_wait_time)
 
 def start_scrapers (keyword:str, request_id:int):
@@ -51,6 +51,10 @@ def start_scrapers (keyword:str, request_id:int):
     
     classes = [ScraperAliexpress]
     
+    # Update request status to working
+    db.update_request_status (request_id, "working")
+    
+    # Start scraping threads
     threads = []
     for class_elem in classes:
         
