@@ -1,6 +1,7 @@
 import os
 import random
 from time import sleep
+from functools import wraps
 from threading import Thread
 from db import Database
 from flask import Flask, request
@@ -35,11 +36,11 @@ def start_scraper (scraper_class:Scraper, keyword:str):
     print (scraper_class)
     print (keyword)
     
-    scraper = scraper_class (keyword, db)
-    scraper.get_results ()
+    # scraper = scraper_class (keyword, db)
+    # scraper.get_results ()
     
-    # random_wait_time = random.randint (15, 30)
-    # sleep (random_wait_time)
+    random_wait_time = random.randint (30, 60)
+    sleep (random_wait_time)
 
 def start_scrapers (keyword:str, request_id:int):
     """ Start all scrapers
@@ -80,8 +81,37 @@ def start_scrapers (keyword:str, request_id:int):
             
     # Update request status to done
     db.update_request_status (request_id, "done")
+
+def wrapper_validate_api_key(function):
+    @wraps(function)
+    def wrap(*args, **kwargs):
+        # Get json data
+        json_data = request.get_json ()
+        api_key = json_data.get ("api-key", "")
+        
+        # Validate required data
+        if not api_key:
+            return ({
+                "status": "error",
+                "message": "Api-key is required",
+                "data": {}
+            }, 400)
+        
+        # Validate if token exist in db
+        api_key_valid = db.validate_token (api_key)
+        if not api_key_valid:
+            return ({
+                "status": "error",
+                "message": "Invalid api-key",
+                "data": {}
+            }, 401)
+            
+        return function(*args, **kwargs)
     
+    return wrap
+
 @app.post ('/keyword/')
+@wrapper_validate_api_key
 def keyword ():
     """ Initilize scraper in background """
     
@@ -91,21 +121,12 @@ def keyword ():
     api_key = json_data.get ("api-key", "")
     
     # Validate required data
-    if not (keyword and api_key):
+    if not keyword:
         return ({
             "status": "error",
-            "message": "Keyword and api-key are required",
+            "message": "Keyword is required",
             "data": {}
         }, 400)
-    
-    # Validate if token exist in db
-    api_key_valid = db.validate_token (api_key)
-    if not api_key_valid:
-        return ({
-            "status": "error",
-            "message": "Invalid api-key",
-            "data": {}
-        }, 401)
     
     # save request in db
     request_id = db.create_new_request (api_key)
@@ -121,6 +142,42 @@ def keyword ():
             "request-id": request_id
         }
     }
+
+@app.post ('/status/')
+@wrapper_validate_api_key
+def status ():
+    """ Get request status """
+    
+    # Get json data
+    json_data = request.get_json ()
+    request_id = json_data.get ("request-id", "")
+    
+    # Validate required data
+    if not request_id:
+        return ({
+            "status": "error",
+            "message": "Request-id is required",
+            "data": {}
+        }, 400)
+    
+    # Get request status
+    request_status = db.get_request_status (request_id)
+    
+    if request_status:
+        return ({
+            "status": "success",
+            "message": "Request status",
+            "data": {
+                "status": request_status
+            }
+        })
+    else:        
+        return ({
+            "status": "error",
+            "message": "Invalid request-id",
+            "data": {}
+        }, 404)
+
 
 
 if __name__ == "__main__":

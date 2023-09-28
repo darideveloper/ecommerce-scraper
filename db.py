@@ -224,4 +224,31 @@ class Database (MySQL):
             WHERE id = {request_id}
         """
         self.run_sql (query)
+    
+    def get_request_status (self, request_id:int) -> str:
+        """ Get request status in db
         
+        Args:
+            request_id (int): request id
+            
+        Returns:
+            str: status name
+        """
+        
+        query = f""" 
+            SELECT status
+            FROM requests
+            WHERE id = {request_id}
+        """
+        
+        status_results = self.run_sql (query)
+        
+        if not status_results:
+            return ""
+        
+        status_num = status_results[0]["status"]
+        for status_name, status_id in self.status.items ():
+            if status_id == status_num:
+                return status_name
+            
+        return ""
