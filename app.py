@@ -1,4 +1,6 @@
 import os
+import random
+from time import sleep
 from threading import Thread
 from db import Database
 from flask import Flask, request
@@ -7,8 +9,6 @@ from scraper import Scraper
 from scraper_amazon import ScraperAmazon
 from scraper_aliexpress import ScraperAliexpress
 from scraper_ebay import ScraperEbay
-from scraper_target import ScraperTarget
-from scraper_walmart import ScraperWalmart
 
 app = Flask(__name__)
 
@@ -25,36 +25,60 @@ USE_THREADING = os.getenv ("USE_THREADING") == "True"
 db = Database(DB_HOST, DB_NAME, DB_USER, DB_PASSWORD)
 
 def start_scraper (scraper_class:Scraper, keyword:str):
-    """ SStart an specific scraper and extract data
+    """ Start an specific scraper and extract data
 
     Args:
         scraper_class (Scraper): Scraper class
         keyword (str): keyword to search
     """
     
+    print (scraper_class)
+    print (keyword)
+    
     scraper = scraper_class (keyword, db)
     scraper.get_results ()
+    
+    # random_wait_time = random.randint (10, 20)
+    # sleep (random_wait_time)
 
-def start_scrapers (keyword:str):
+def start_scrapers (keyword:str, request_id:int):
     """ Start all scrapers
 
     Args:
-        keyword (str): _description_
+        keyword (str): keyword to search
+        request_id (int): request id
     """
     
-    classes = [ScraperAliexpress, ScraperTarget, ScraperWalmart]
+    classes = [ScraperAliexpress]
     
+    threads = []
     for class_elem in classes:
         
         # Run functions with and without threads
         if USE_THREADING:
             thread_scraper = Thread (target=start_scraper, args=(class_elem, keyword))
             thread_scraper.start ()
+            threads.append (thread_scraper)
         else:
             start_scraper (class_elem, keyword)
+            
+    sleep (10)
+            
+    # Wait for all threads to finish
+    while True:
+        
+        alive_threads = list (filter (lambda thread: thread.is_alive (), threads))
+        if not alive_threads:
+            break
+        
+        else:
+            sleep (2)
+            
+    # Update request status to done
+    db.update_request_status (request_id, "done")
     
-@app.post ('/results/')
-def start_scraper ():
+@app.post ('/keyword/')
+def keyword ():
     """ Initilize scraper in background """
     
     # Get json data
@@ -83,7 +107,7 @@ def start_scraper ():
     request_id = db.create_new_request (api_key)
     
     # initialize web scraper in background
-    thread_scrapers = Thread (target=start_scrapers, args=(keyword,))
+    thread_scrapers = Thread (target=start_scrapers, args=(keyword, request_id))
     thread_scrapers.start ()
     
     return {

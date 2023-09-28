@@ -82,6 +82,8 @@ class Database (MySQL):
             }
         """
         
+        print ("Getting stores from database")
+        
         # Query all stores 
         query = "select * from stores"
         results = self.run_sql(query)
@@ -101,6 +103,8 @@ class Database (MySQL):
         Args:
             products_data (list): list of dict with products data
         """
+        
+        print (f"Saving {products_data} products in database")
         
         for product in products_data:
             
@@ -127,6 +131,8 @@ class Database (MySQL):
     def delete_products (self):
         """ Delete all rows from products table """
         
+        print ("Deleting all products from database")
+        
         query = "delete from products"
         self.run_sql(query)
         
@@ -136,6 +142,9 @@ class Database (MySQL):
         Args:
             token (str): api access token
         """
+        
+        token_cencured = token[:5] + "..."
+        print (f"Validating token {token_cencured}")
         
         token = self.get_clean_text (token)
         
@@ -164,6 +173,8 @@ class Database (MySQL):
         Returns:
             int: id of new request
         """
+        
+        print ("Creating new request in database")
         
         # Get status for new requests
         status_todo_id = self.status["to do"]
@@ -194,3 +205,23 @@ class Database (MySQL):
         """
         id = self.run_sql (query)[0]["id"]
         return id
+    
+    def update_request_status (self, request_id:int, status_name:str):
+        """ Update request status in db
+        
+        Args:
+            request_id (int): request id
+            status_name (str): status name
+        """
+        
+        print (f"Request {request_id} status updated to {status_name}")
+        
+        status_num = self.status[status_name]
+        
+        query = f"""
+            UPDATE requests
+            SET status = {status_num}
+            WHERE id = {request_id}
+        """
+        self.run_sql (query)
+        
