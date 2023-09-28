@@ -37,16 +37,8 @@ class ScraperEbay (Scraper):
         self.store = "ebay"
         self.start_product = 2
         
-        # Get proxy from pyproxy
-        proxy_data = Scraper.proxy.get_proxy_pyproxy ()
-        
         # Send data to scraper
-        super().__init__ (
-            keyword, 
-            db, 
-            proxy_data["proxy_address"], 
-            proxy_data["port"]
-        )
+        super().__init__ (keyword, db)
         
     def __load_page__ (self, product:str):
         """ Load ebay search page
@@ -82,7 +74,7 @@ class ScraperEbay (Scraper):
         """
         
         price_parts = text.split (" ")
-        price = price_parts[1].replace ("$", "").replace (",", "")
+        price = price_parts[0].replace ("$", "").replace (",", "")
         
         if price.replace (".", "").isdigit ():
             return price

@@ -37,16 +37,8 @@ class ScraperAmazon (Scraper):
         self.store = "amazon"
         self.start_product = 7
         
-        # Get proxy from pyproxy
-        proxy_data = Scraper.proxy.get_proxy_pyproxy ()
-        
         # Send data to scraper
-        super().__init__ (
-            keyword, 
-            db, 
-            proxy_data["proxy_address"], 
-            proxy_data["port"]
-        )
+        super().__init__ (keyword, db)
         
     def __load_page__ (self, product:str):
         """ Load amazon search page

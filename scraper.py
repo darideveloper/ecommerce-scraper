@@ -15,8 +15,9 @@ USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
 class Scraper (WebScraping, ABC):
     
     proxy = Proxy ()
+    proxy_data = proxy.get_proxy_webshare ()
         
-    def __init__ (self, keyword:str, db:Database, proxy_server:str="", proxy_port:int=0):
+    def __init__ (self, keyword:str, db:Database):
         """ Start scraper
 
         Args:
@@ -40,8 +41,8 @@ class Scraper (WebScraping, ABC):
         
             # Open chrome
             super().__init__ (
-                proxy_server=proxy_server,
-                proxy_port=proxy_port,
+                proxy_server= Scraper.proxy_data["proxy_address"],
+                proxy_port=Scraper.proxy_data["port"]
             )        
             
         else:
