@@ -53,7 +53,6 @@ class ScraperAmazon (Scraper):
         self.set_cookies (cookies)
         link = f"https://www.amazon.com/s?k={product}&s=review-rank"
         self.set_page (link)
-        print ()
 
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in amazon
