@@ -1,3 +1,5 @@
+import json
+import random
 from datetime import datetime
 from database.mysql import MySQL
 
@@ -17,6 +19,7 @@ class Database (MySQL):
         
         self.status = self.__get_status__ ()
         self.api_keys = self.__get_api_keys__ ()
+        self.stores = self.get_stores ()
     
     def __get_status__ (self) -> dict:
         """ Retuen status from database as dictionary
@@ -104,7 +107,7 @@ class Database (MySQL):
             products_data (list): list of dict with products data
         """
         
-        print (f"Saving {products_data} products in database")
+        print (f"Saving {len(products_data)} products in database")
         
         for product in products_data:
             
@@ -252,3 +255,46 @@ class Database (MySQL):
                 return status_name
             
         return ""
+    
+    def get_cookies_random (self, store_name:str) -> list:
+        """ Get cookies from a random user in db
+
+        Args:
+            store_name (str): store name like amazon, ebay, etc
+
+        Returns:
+            list: list of dict with cookies (key and value)
+        """
+        
+        print (f"Getting cookies from {store_name} store")
+        
+        # Get cookies from all users in the store
+        id_store = self.stores[store_name]["id"]
+        id_status = self.status["cookie on"]
+        
+        query = f"""
+            SELECT cookies
+            FROM cookies
+            WHERE 
+                id_store = {id_store}
+                AND
+                status = {id_status}
+        """
+        cookies_users = self.run_sql (query)
+        
+        if not cookies_users:
+            return []
+        
+        # Select random user
+        random_cookies_json = random.choice (cookies_users)["cookies"]
+        random_cookies = json.loads (random_cookies_json)
+        
+        # Keep only cookie name and cookie value
+        cookies_clean = []
+        for cookie in random_cookies:
+            cookies_clean.append ({
+                "name": cookie["name"],
+                "value": cookie["value"]
+            })
+        
+        return cookies_clean

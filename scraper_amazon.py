@@ -17,7 +17,7 @@ class ScraperAmazon (Scraper):
             keyword (str): product to search
             db (Database): database instance
         """
-
+        
         # Css self.selectors
         self.selectors = {
             'product': 'div[data-asin][data-uuid]',
@@ -47,8 +47,13 @@ class ScraperAmazon (Scraper):
             product (str): product to search
         """
         
+        link = "http://www.amazon.com/"
+        self.set_page (link)
+        cookies = self.db.get_cookies_random (self.store)
+        self.set_cookies (cookies)
         link = f"https://www.amazon.com/s?k={product}&s=review-rank"
         self.set_page (link)
+        print ()
 
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in amazon

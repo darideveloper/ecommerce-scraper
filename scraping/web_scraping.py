@@ -107,7 +107,7 @@ class WebScraping ():
         for cookie in cookies_formatted:
             try:
                 self.driver.add_cookie(cookie)
-            except:
+            except Exception as err:
                 pass
 
     def __set_browser_instance__(self):

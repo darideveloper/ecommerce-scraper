@@ -28,14 +28,23 @@ CREATE TABLE `ApiKeys` (
 CREATE TABLE `Requests` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `status` integer,
-  `start_datetime` datetime,
-  `end_datetime` datetime,
+  `todo_datetime` datetime,
+  `working_datetime` datetime,
+  `done_datetime` datetime,
   `api_key` integer
 );
 
 CREATE TABLE `Status` (
   `id` integer PRIMARY KEY AUTO_INCREMENT,
   `name` varchar(255)
+);
+
+CREATE TABLE `Cookies` (
+  `id` integer PRIMARY KEY AUTO_INCREMENT,
+  `id_store` integer,
+  `username` varchar(255),
+  `cookies` json,
+  `status` integer
 );
 
 ALTER TABLE `Products` ADD FOREIGN KEY (`id_store`) REFERENCES `Stores` (`id`);
@@ -45,3 +54,7 @@ ALTER TABLE `Products` ADD FOREIGN KEY (`id_request`) REFERENCES `Requests` (`id
 ALTER TABLE `Requests` ADD FOREIGN KEY (`status`) REFERENCES `Status` (`id`);
 
 ALTER TABLE `Requests` ADD FOREIGN KEY (`api_key`) REFERENCES `ApiKeys` (`id`);
+
+ALTER TABLE `Cookies` ADD FOREIGN KEY (`id_store`) REFERENCES `Stores` (`id`);
+
+ALTER TABLE `Cookies` ADD FOREIGN KEY (`status`) REFERENCES `Status` (`id`);

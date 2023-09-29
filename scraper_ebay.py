@@ -17,7 +17,7 @@ class ScraperEbay (Scraper):
             keyword (str): product to search
             db (Database): database instance
         """
-
+        
         # Css self.selectors
         self.selectors = {
             'product': 'li.s-item',

@@ -1,4 +1,5 @@
 import os
+import random
 from time import sleep
 from dotenv import load_dotenv
 from scraping.web_scraping import WebScraping
@@ -9,8 +10,11 @@ from proxy import Proxy
 # read .env file
 load_dotenv ()
 MAX_PRODUCTS = int(os.getenv ("MAX_PRODUCTS"))
-CHROME_FOLDER = os.getenv ("CHROME_FOLDER")
 USE_DEBUG = os.getenv ("USE_DEBUG") == "True"
+
+# paths
+CURRENT_FOLDER = os.path.dirname(__file__)
+CHROME_FOLDER = os.path.join (CURRENT_FOLDER, "chrome_data")
     
 class Scraper (WebScraping, ABC):
     
@@ -42,11 +46,11 @@ class Scraper (WebScraping, ABC):
             # Open chrome
             super().__init__ (
                 proxy_server= Scraper.proxy_data["proxy_address"],
-                proxy_port=Scraper.proxy_data["port"]
+                proxy_port=Scraper.proxy_data["port"],
             )        
             
         else:
-            super().__init__ ()       
+            super().__init__ ()
         
         # Delete products in debug mode
         if USE_DEBUG:

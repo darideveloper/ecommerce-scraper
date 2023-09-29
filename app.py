@@ -33,14 +33,11 @@ def start_scraper (scraper_class:Scraper, keyword:str):
         keyword (str): keyword to search
     """
     
-    print (scraper_class)
-    print (keyword)
+    scraper = scraper_class (keyword, db)
+    scraper.get_results ()
     
-    # scraper = scraper_class (keyword, db)
-    # scraper.get_results ()
-    
-    random_wait_time = random.randint (30, 60)
-    sleep (random_wait_time)
+    # random_wait_time = random.randint (30, 60)
+    # sleep (random_wait_time)
 
 def start_scrapers (keyword:str, request_id:int):
     """ Start all scrapers
@@ -50,7 +47,7 @@ def start_scrapers (keyword:str, request_id:int):
         request_id (int): request id
     """
     
-    classes = [ScraperAliexpress]
+    classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
     
     # Update request status to working
     db.update_request_status (request_id, "working")
@@ -66,9 +63,7 @@ def start_scrapers (keyword:str, request_id:int):
             threads.append (thread_scraper)
         else:
             start_scraper (class_elem, keyword)
-            
-    sleep (10)
-            
+                        
     # Wait for all threads to finish
     while True:
         
