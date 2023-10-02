@@ -30,7 +30,7 @@ def start_scraper (scraper_class:Scraper, keyword:str):
     """
     
     scraper = scraper_class (keyword, db)
-    scraper.get_results ()
+    scraper.get_results (47) # request_id REAL FROM DB
     
     # random_wait_time = random.randint (30, 60)
     # sleep (random_wait_time)
@@ -43,7 +43,7 @@ def start_scrapers (keyword:str, request_id:int):
         request_id (int): request id
     """
     
-    classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
+    classes = [ScraperAmazon]
     
     # Update request status to working
     db.update_request_status (request_id, "working")

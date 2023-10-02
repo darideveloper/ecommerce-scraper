@@ -121,11 +121,33 @@ class Database (MySQL):
             sales = product["sales"]
             link = product["link"]
             id_store = product["id_store"]
+            id_request = product["id_request"]
             
             # Generate sql query
             query = f"""
-                INSERT INTO products (image, title, rate_num, reviews, price, best_seller, sales, link, id_store) 
-                VALUES ('{image}', '{title}', {rate_num}, {reviews}, {price}, {best_seller}, {sales}, '{link}', {id_store}); 
+                INSERT INTO products (
+                    image, 
+                    title, 
+                    rate_num, 
+                    reviews, 
+                    price, 
+                    best_seller, 
+                    sales, 
+                    link, 
+                    id_store,
+                    id_request
+                ) VALUES (
+                    '{image}', 
+                    '{title}', 
+                    {rate_num}, 
+                    {reviews}, 
+                    {price}, 
+                    {best_seller}, 
+                    {sales}, 
+                    '{link}',
+                    {id_store},
+                    {id_request}
+                ); 
             """.replace ("\n", "")
                             
             # Save data

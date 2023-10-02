@@ -18,7 +18,7 @@ CURRENT_FOLDER = os.path.dirname(__file__)
 class Scraper (WebScraping, ABC):
     
     proxy = Proxy ()
-    proxy_data = proxy.get_proxy_webshare ()
+    proxy_data = proxy.get_proxy_iproyal ()
         
     def __init__ (self, keyword:str, db:Database):
         """ Start scraper
@@ -292,7 +292,7 @@ class Scraper (WebScraping, ABC):
                     reviews = 0
                     
                 if sales:
-                    sales = self.clean_text (sales, ["(", ")", "+", ",", " ", "sold"])
+                    sales = self.clean_text (sales, ["(", ")", "+", ",", " ", "sold", "."])
                     
                     # Convert "K" numbers
                     if "k" in sales.lower():
@@ -319,7 +319,8 @@ class Scraper (WebScraping, ABC):
                     "best_seller": best_seller,
                     "sales": sales,
                     "link": link,
-                    "id_store": self.stores[self.store]["id"]
+                    "id_store": self.stores[self.store]["id"],
+                    "id_request": request_id
                 })
                 
                 # End loop when extract al required products
