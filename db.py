@@ -278,11 +278,12 @@ class Database (MySQL):
             
         return ""
     
-    def get_cookies_random (self, store_name:str) -> list:
+    def get_cookies_random (self, store_name:str, clean_cookies=True) -> list:
         """ Get cookies from a random user in db
 
         Args:
             store_name (str): store name like amazon, ebay, etc
+            clean_cookies (bool, optional): clean cookies to keep only name and value. Defaults to True.
 
         Returns:
             list: list of dict with cookies (key and value)
@@ -312,14 +313,17 @@ class Database (MySQL):
         random_cookies = json.loads (random_cookies_json)
         
         # Keep only cookie name and cookie value
-        cookies_clean = []
-        for cookie in random_cookies:
-            cookies_clean.append ({
-                "name": cookie["name"],
-                "value": cookie["value"]
-            })
+        if clean_cookies:
+            cookies_cleaned = []
+            for cookie in cookies_cleaned:
+                cookies_cleaned.append ({
+                    "name": cookie["name"],
+                    "value": cookie["value"]
+                })
+        else:
+            cookies_cleaned = random_cookies
         
-        return cookies_clean
+        return cookies_cleaned
     
     def get_products (self, id_request:int) -> list:
         """ Get products from a request and all stores

@@ -93,9 +93,12 @@ class Proxy ():
         res = requests.get ("https://acq.iemoapi.com/getProxyIp?protocol=http&num=1&regions=us&lb=1&return_type=txt")
         proxy = res.text.split (":")
         
+        host = proxy[0]
+        port = proxy[1].replace ("\r\n", "").replace(',"success"', "")
+        
         return {
-            "proxy_address": proxy[0],
-            "port": int(proxy[1].replace ("\r\n", ""))
+            "proxy_address": host,
+            "port": int(port)
         }
         
     def get_proxy_iproyal (self) -> dict:

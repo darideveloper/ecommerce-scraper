@@ -18,7 +18,7 @@ CURRENT_FOLDER = os.path.dirname(__file__)
 class Scraper (WebScraping, ABC):
     
     proxy = Proxy ()
-    proxy_data = proxy.get_proxy_iproyal ()
+    proxy_data = proxy.get_proxy_pyproxy ()
         
     def __init__ (self, keyword:str, db:Database):
         """ Start scraper

@@ -95,14 +95,22 @@ class WebScraping ():
 
         # Format cookies
         cookies_formatted = []
+        delete_keys = ["hostOnly", "session", "storeId"]
         for cookie in cookies:
 
             # rename expiration date
             if "expirationDate" in cookie:
                 cookie["expiry"] = int(cookie["expirationDate"])
                 del cookie["expirationDate"]
+                
+            for key in delete_keys:
+                if key in cookie:
+                    del cookie[key]
 
             cookies_formatted.append(cookie)
+            
+            cookie["sameSite"] = "None"
+
 
         for cookie in cookies_formatted:
             try:
