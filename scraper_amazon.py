@@ -47,10 +47,13 @@ class ScraperAmazon (Scraper):
             product (str): product to search
         """
         
+        # Load cookies
         link = "http://www.amazon.com/"
         self.set_page (link)
         cookies = self.db.get_cookies_random (self.store)
         self.set_cookies (cookies)
+        
+        # Load search page
         link = f"https://www.amazon.com/s?k={product}&s=review-rank"
         self.set_page (link)
 
@@ -103,8 +106,10 @@ class ScraperAmazon (Scraper):
             str: product link in store
         """
         
+        prefix = "https://www.amazon.com"
         link = self.get_attrib (selector, "href")
-        link = "https://www.amazon.com" + link
+        if prefix not in link:
+            link = prefix + link
         return link
     
     def get_rate_num (self, selector:str) -> float:
