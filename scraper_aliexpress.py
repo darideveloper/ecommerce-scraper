@@ -32,8 +32,7 @@ class ScraperAliexpress (Scraper):
             'sales': '[class*="trade-"]',
             'link': '',
             
-            "search_bar": '#search-key',
-            "search_btn": '.search-button',
+            "age_restriction": '.comet-modal-body div[class*="left"]'
         }
         
         self.store = "aliexpress"
@@ -48,15 +47,21 @@ class ScraperAliexpress (Scraper):
         Args:
             product (str): product to search
         """
+    
+        # Load product page
+        product_clean_a = product.replace (" ", "-")
+        product_clean_b = product.replace (" ", "+")
+        search_link = f"https://www.aliexpress.com/w/wholesale-{product_clean_a}.html?SearchText={product_clean_b}&catId=0&g=y&initiative_id=SB_20231002113836&isFavorite=y&spm=a2g0o.productlist.1000002.0&trafficChannel=main"
+        self.set_page (search_link)
+
+        # Load page and cookies        
+        cookies = self.db.get_cookies_random (self.store, False)
+        self.set_cookies (cookies)
+        self.set_page (search_link)
         
-        self.set_page ("https://www.aliexpress.com/")
-        sleep (1)
+        # Accept age restriction
+        self.click_js (self.selectors["age_restriction"])
         self.refresh_selenium ()
-        
-        self.send_data (self.selectors["search_bar"], product)
-        sleep (1)
-        self.click (self.selectors["search_btn"])
-        sleep (1)
        
     def __get_is_sponsored__ (self, text:str) -> str:
         """ Get if the product is sponsored in aliexpress
