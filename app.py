@@ -106,6 +106,35 @@ def wrapper_validate_api_key(function):
     
     return wrap
 
+def wrapper_validate_request_id(function):
+    @wraps(function)
+    def wrap(*args, **kwargs):
+        # Get json data
+        json_data = request.get_json ()
+        request_id = json_data.get ("request-id", "")
+        
+        # Validate required data
+        if not request_id:
+            return ({
+                "status": "error",
+                "message": "Request-id is required",
+                "data": {}
+            }, 400)
+        
+        # Get request status
+        request_status = db.get_request_status (request_id)
+        
+        if not request_status:
+            return ({
+                "status": "error",
+                "message": "Invalid request-id",
+                "data": {}
+            }, 404)
+            
+        return function(*args, **kwargs)
+    
+    return wrap
+
 @app.post ('/keyword/')
 @wrapper_validate_api_key
 def keyword ():
@@ -139,8 +168,9 @@ def keyword ():
         }
     }
 
-@app.post ('/status/')
+@app.get ('/status/')
 @wrapper_validate_api_key
+@wrapper_validate_request_id
 def status ():
     """ Get request status """
     
@@ -148,33 +178,36 @@ def status ():
     json_data = request.get_json ()
     request_id = json_data.get ("request-id", "")
     
-    # Validate required data
-    if not request_id:
-        return ({
-            "status": "error",
-            "message": "Request-id is required",
-            "data": {}
-        }, 400)
-    
     # Get request status
     request_status = db.get_request_status (request_id)
     
-    if request_status:
-        return ({
-            "status": "success",
-            "message": "Request status",
-            "data": {
-                "status": request_status
-            }
-        })
-    else:        
-        return ({
-            "status": "error",
-            "message": "Invalid request-id",
-            "data": {}
-        }, 404)
+    return ({
+        "status": "success",
+        "message": "Request status",
+        "data": {
+            "status": request_status
+        }
+    })
+        
+@app.get ('/results/')
+@wrapper_validate_api_key
+@wrapper_validate_request_id
+def results ():
+    
+    # Get json data
+    json_data = request.get_json ()
+    request_id = json_data.get ("request-id", "")
 
-
+    # Get products from db
+    products = db.get_products (request_id)
+    
+    return ({
+        "status": "success",
+        "message": "Products found",
+        "data": {
+            "products": products
+        }
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)

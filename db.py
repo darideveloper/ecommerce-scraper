@@ -320,3 +320,37 @@ class Database (MySQL):
             })
         
         return cookies_clean
+    
+    def get_products (self, id_request:int) -> list:
+        """ Get products from a request and all stores
+
+        Args:
+            id_request (int): request id from api
+
+        Returns:
+            list: list of dict with products data
+            
+        """
+        
+        # Get products from db
+        query = f"""
+            SELECT * 
+            FROM products
+            WHERE 
+                id_request = {id_request}
+        """
+        
+        products = self.run_sql (query)
+        
+        # Sort products by store
+        products_store = {}
+        for store_name, store_data in self.stores.items():
+            store_id = store_data["id"]
+            
+            # Filter products of the current store
+            products_store[store_name] = list(filter(
+                lambda product: product["id_store"] == store_id, products
+            ))
+        
+        
+        return products_store
