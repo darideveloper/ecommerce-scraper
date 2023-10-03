@@ -11,7 +11,8 @@ class Proxy ():
     def __init__ (self):
         """ Auto load proxies from webshare """
         
-        self.proxies_webshare = self.__load_proxies_webshare__ ()
+        # self.proxies_webshare = self.__load_proxies_webshare__ ()
+        pass
         
     def __load_proxies_webshare__ (self) -> list:
         """ Save webshare USA proxies, as class variable 
@@ -115,4 +116,20 @@ class Proxy ():
         return {
             "proxy_address": "geo.iproyal.com",
             "port": 12321
+        }
+        
+    def get_proxy_brightdata (self) -> dict:
+        """ Get proxy from brightdata
+
+        Returns:
+            dict: proxy data
+            {
+                "proxy_address": str,
+                "port": int
+            }
+        """
+        
+        return {
+            "proxy_address": "brd.superproxy.io",
+            "port": 22225,
         }
