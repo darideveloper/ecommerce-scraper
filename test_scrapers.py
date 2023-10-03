@@ -1,5 +1,4 @@
 import os
-import random
 from time import sleep
 from threading import Thread
 from db import Database
@@ -43,7 +42,7 @@ def start_scrapers (keyword:str, request_id:int):
         request_id (int): request id
     """
     
-    classes = [ScraperAmazon, ScraperAliexpress]
+    classes = [ScraperAmazon, ScraperAliexpress, ScraperEbay]
     
     # Update request status to working
     db.update_request_status (request_id, "working")
@@ -72,5 +71,7 @@ def start_scrapers (keyword:str, request_id:int):
             
     # Update request status to done
     db.update_request_status (request_id, "done")
-        
-start_scrapers ("protein", 38)
+
+while True:
+    start_scrapers ("protein", 38)
+    sleep (20)
