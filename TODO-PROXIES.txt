@@ -1,6 +1,0 @@
-* disable proxies in all pages
-* enablle proxies in all pages
-* load extension from zip
-* chrome data folders
-* selenium (last version)
-* playwright
